@@ -53,6 +53,7 @@
       "fMRI",
       "0-12mo",
       "Typical Dev",
+      "Structural",
       "Trajectory"
     ]
   },
@@ -203,6 +204,7 @@
       "EEG",
       "Autism",
       "RS-Oscillatory",
+      "Power",
       "Typical Dev"
     ]
   },
@@ -497,6 +499,7 @@
       "EEG",
       "0-12mo",
       "Autism",
+      "Coherence",
       "Connectivity",
       "Typical Dev"
     ]
@@ -526,6 +529,7 @@
       "fMRI",
       "0-12mo",
       "Typical Dev",
+      "Structural",
       "Connectivity",
       "Trajectory"
     ]
@@ -586,6 +590,7 @@
       "fMRI",
       "0-12mo",
       "Typical Dev",
+      "Structural",
       "Trajectory",
       "Connectivity"
     ]
@@ -616,6 +621,7 @@
       "3-5yr",
       "Autism",
       "RS-Oscillatory",
+      "Power",
       "Typical Dev"
     ]
   },
@@ -675,7 +681,8 @@
       "0-12mo",
       "Typical Dev",
       "RS-fMRI",
-      "RS-Oscillatory"
+      "RS-Oscillatory",
+      "Power"
     ]
   },
   {
@@ -733,6 +740,7 @@
       "0-12mo",
       "Typical Dev",
       "RS-fMRI",
+      "Structural",
       "Trajectory",
       "Connectivity"
     ]
@@ -763,6 +771,7 @@
       "0-12mo",
       "Autism",
       "RS-Oscillatory",
+      "Power",
       "Trajectory"
     ]
   },
@@ -793,6 +802,7 @@
       "12-36mo",
       "3-5yr",
       "RS-Oscillatory",
+      "Power",
       "Trajectory",
       "Typical Dev"
     ]
@@ -850,6 +860,7 @@
       "EEG",
       "0-12mo",
       "Typical Dev",
+      "Power",
       "Trajectory"
     ]
   },
@@ -877,7 +888,8 @@
     "keywords": [
       "EEG",
       "0-12mo",
-      "Early Adversity"
+      "Early Adversity",
+      "Power"
     ]
   },
   {
@@ -905,6 +917,7 @@
       "EEG",
       "0-12mo",
       "RS-Oscillatory",
+      "Power",
       "Typical Dev",
       "Trajectory"
     ]
@@ -964,6 +977,7 @@
       "Early Adversity",
       "Trajectory",
       "RS-Oscillatory",
+      "Power",
       "Connectivity"
     ]
   },
@@ -992,6 +1006,7 @@
       "EEG",
       "0-12mo",
       "ERP",
+      "Power",
       "Typical Dev"
     ]
   }
