@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Developmental Cognitive Neuroscience Research Trends</title>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+<style>
+  :root {
+    --primary: #2c3e50;
+    --accent: #3498db;
+    --accent2: #e74c3c;
+    --bg: #f8f9fa;
+    --card-bg: #ffffff;
+    --border: #dee2e6;
+    --text: #333;
+    --muted: #6c757d;
+    --tag-bg: #e8f4f8;
+    --tag-color: #2980b9;
+    --priority-bg: #fff3cd;
+    --priority-border: #ffc107;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  header {
+    background: var(--primary);
+    color: white;
+    padding: 1.5rem 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+
+  header h1 { font-size: 1.4rem; font-weight: 700; }
+  header p { font-size: 0.85rem; opacity: 0.8; margin-top: 0.2rem; }
+
+  .controls {
+    background: white;
+    padding: 1rem 2rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  .controls input[type="text"] {
+    padding: 0.45rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.9rem;
+    width: 220px;
+  }
+
+  .controls select {
+    padding: 0.45rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.9rem;
+    background: white;
+    cursor: pointer;
+  }
+
+  .controls label { font-size: 0.85rem; color: var(--muted); margin-right: -0.4rem; }
+
+  .view-toggle {
+    margin-left: auto;
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .view-btn {
+    padding: 0.4rem 0.9rem;
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    background: white;
+    color: var(--accent);
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+  }
+
+  .view-btn.active {
+    background: var(--accent);
+    color: white;
+  }
+
+  .stats-bar {
+    background: white;
+    border-bottom: 1px solid var(--border);
+    padding: 0.5rem 2rem;
+    font-size: 0.82rem;
+    color: var(--muted);
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .stats-bar span strong { color: var(--text); }
+
+  main { padding: 1.5rem 2rem; max-width: 1400px; margin: 0 auto; }
+
+  /* CARD VIEW */
+  #card-view {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .paper-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem;
+    transition: box-shadow 0.2s, transform 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .paper-card:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+  }
+
+  .paper-card.priority {
+    border-left: 4px solid var(--priority-border);
+    background: linear-gradient(135deg, var(--priority-bg) 0%, white 40%);
+  }
+
+  .card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem; }
+
+  .card-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--primary);
+    line-height: 1.4;
+  }
+
+  .card-title a { color: inherit; text-decoration: none; }
+  .card-title a:hover { color: var(--accent); text-decoration: underline; }
+
+  .priority-badge {
+    background: var(--priority-border);
+    color: #856404;
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 12px;
+    white-space: nowrap;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  .card-meta {
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  .card-authors {
+    font-size: 0.82rem;
+    color: #555;
+    font-style: italic;
+  }
+
+  .card-institution {
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  .card-abstract {
+    font-size: 0.8rem;
+    color: #555;
+    line-height: 1.5;
+    max-height: 80px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+  }
+
+  .card-abstract.expanded { max-height: none; }
+
+  .card-abstract::after {
+    content: '... (show more)';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: linear-gradient(to right, transparent, white 40%);
+    padding-left: 2rem;
+    color: var(--accent);
+    font-size: 0.75rem;
+  }
+
+  .card-abstract.expanded::after { display: none; }
+
+  .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: 0.2rem;
+  }
+
+  .tag {
+    background: var(--tag-bg);
+    color: var(--tag-color);
+    font-size: 0.72rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 12px;
+    font-weight: 500;
+  }
+
+  .tag.method { background: #e8f5e9; color: #2e7d32; }
+  .tag.age { background: #fce4ec; color: #c62828; }
+
+  .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem;
+    color: var(--muted);
+    padding-top: 0.4rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .card-footer a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .card-footer a:hover { text-decoration: underline; }
+
+  /* TABLE VIEW */
+  #table-view { display: none; }
+
+  #papers-table { width: 100% !important; font-size: 0.85rem; }
+
+  #papers-table th {
+    background: var(--primary);
+    color: white;
+    padding: 0.75rem 1rem;
+    white-space: nowrap;
+  }
+
+  #papers-table td { padding: 0.65rem 1rem; vertical-align: top; }
+
+  #papers-table tr:nth-child(even) td { background: #f9fafb; }
+  #papers-table tr:hover td { background: #eef6ff; }
+
+  .table-title a { color: var(--primary); font-weight: 600; text-decoration: none; }
+  .table-title a:hover { color: var(--accent); text-decoration: underline; }
+
+  /* KEYWORD CHIPS */
+  .kw-eeg { background: #dbeafe; color: #1e40af; }
+  .kw-fmri { background: #ede9fe; color: #5b21b6; }
+  .kw-behavioral { background: #d1fae5; color: #065f46; }
+  .kw-eye-tracking { background: #fef3c7; color: #92400e; }
+  .kw-early-adversity { background: #fee2e2; color: #991b1b; }
+  .kw-autism { background: #fce7f3; color: #9d174d; }
+  .kw-down-syndrome { background: #e0e7ff; color: #3730a3; }
+  .kw-rs-oscillatory { background: #f0fdf4; color: #14532d; border: 1px solid #86efac; }
+  .kw-rs-fmri { background: #f5f3ff; color: #4c1d95; border: 1px solid #c4b5fd; }
+  .kw-connectivity { background: #fff7ed; color: #9a3412; }
+  .kw-erp { background: #f0f9ff; color: #0c4a6e; }
+  .kw-trajectory { background: #f7fee7; color: #3f6212; }
+  .kw-typical-dev { background: #ecfdf5; color: #064e3b; }
+  .kw-multivariate { background: #fdf4ff; color: #6b21a8; }
+
+  /* KEYWORD FILTER CHIPS */
+  .kw-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    padding: 0.75rem 2rem;
+    background: white;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .kw-filter-label { font-size: 0.8rem; color: var(--muted); align-self: center; margin-right: 0.25rem; }
+
+  .kw-chip {
+    padding: 0.25rem 0.65rem;
+    border-radius: 14px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    transition: all 0.2s;
+    opacity: 0.6;
+  }
+
+  .kw-chip:hover { opacity: 0.85; }
+  .kw-chip.active { opacity: 1; border-color: var(--primary); }
+
+  /* EMPTY STATE */
+  .empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: var(--muted);
+    font-size: 1rem;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    header { padding: 1rem; }
+    .controls { padding: 0.75rem 1rem; }
+    main { padding: 1rem; }
+    #card-view { grid-template-columns: 1fr; }
+  }
+
+  .dataTables_wrapper .dataTables_filter { display: none; }
+  .dataTables_wrapper .dataTables_info { font-size: 0.8rem; color: var(--muted); }
+  .dataTables_wrapper .dataTables_paginate { margin-top: 0.75rem; }
+  .dataTables_wrapper .dataTables_paginate .paginate_button {
+    padding: 0.3rem 0.65rem;
+    border-radius: 4px;
+    font-size: 0.82rem;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Developmental Cognitive Neuroscience Research Trends</h1>
+  <p>Automated weekly tracker — infant &amp; toddler neuroimaging research (EEG, fMRI, fNIRS, MEG)</p>
+</header>
+
+<div class="controls">
+  <label>Search:</label>
+  <input type="text" id="search-box" placeholder="Title, author, keyword...">
+
+  <label>Method:</label>
+  <select id="filter-method">
+    <option value="">All methods</option>
+    <option value="EEG">EEG</option>
+    <option value="MEG">MEG</option>
+    <option value="fMRI">fMRI</option>
+    <option value="fNIRS">fNIRS</option>
+    <option value="Behavioral">Behavioral</option>
+  </select>
+
+  <label>Age:</label>
+  <select id="filter-age">
+    <option value="">All ages</option>
+    <option value="0-12mo">0–12 mo</option>
+    <option value="12-36mo">12–36 mo</option>
+    <option value="3-5yr">3–5 yr</option>
+  </select>
+
+  <label>Month:</label>
+  <select id="filter-month">
+    <option value="">All months</option>
+    <option value="2026-05">May 2026</option>
+    <option value="2026-04">Apr 2026</option>
+    <option value="2026-03">Mar 2026</option>
+    <option value="2026-02">Feb 2026</option>
+    <option value="2026-01">Jan 2026</option>
+  </select>
+
+  <label>Priority:</label>
+  <select id="filter-priority">
+    <option value="">All papers</option>
+    <option value="true">Priority authors only</option>
+  </select>
+
+  <div class="view-toggle">
+    <button class="view-btn active" onclick="setView('card')" id="btn-card">Cards</button>
+    <button class="view-btn" onclick="setView('table')" id="btn-table">Table</button>
+  </div>
+</div>
+
+<div class="kw-filters">
+  <span class="kw-filter-label">Keywords:</span>
+  <span class="kw-chip kw-eeg" data-kw="EEG" onclick="toggleKw(this)">EEG</span>
+  <span class="kw-chip kw-fmri" data-kw="fMRI" onclick="toggleKw(this)">fMRI</span>
+  <span class="kw-chip kw-behavioral" data-kw="Behavioral" onclick="toggleKw(this)">Behavioral</span>
+  <span class="kw-chip kw-eye-tracking" data-kw="Eye-tracking" onclick="toggleKw(this)">Eye-tracking</span>
+  <span class="kw-chip kw-rs-oscillatory" data-kw="RS-Oscillatory" onclick="toggleKw(this)">RS-Oscillatory</span>
+  <span class="kw-chip kw-rs-fmri" data-kw="RS-fMRI" onclick="toggleKw(this)">RS-fMRI</span>
+  <span class="kw-chip kw-connectivity" data-kw="Connectivity" onclick="toggleKw(this)">Connectivity</span>
+  <span class="kw-chip kw-erp" data-kw="ERP" onclick="toggleKw(this)">ERP</span>
+  <span class="kw-chip kw-early-adversity" data-kw="Early Adversity" onclick="toggleKw(this)">Early Adversity</span>
+  <span class="kw-chip kw-autism" data-kw="Autism" onclick="toggleKw(this)">Autism</span>
+  <span class="kw-chip kw-down-syndrome" data-kw="Down Syndrome" onclick="toggleKw(this)">Down Syndrome</span>
+  <span class="kw-chip kw-typical-dev" data-kw="Typical Dev" onclick="toggleKw(this)">Typical Dev</span>
+  <span class="kw-chip kw-trajectory" data-kw="Trajectory" onclick="toggleKw(this)">Trajectory</span>
+  <span class="kw-chip kw-multivariate" data-kw="Multivariate" onclick="toggleKw(this)">Multivariate</span>
+</div>
+
+<div class="stats-bar" id="stats-bar">
+  <span>Showing <strong id="stat-showing">–</strong> papers</span>
+  <span>Total in database: <strong id="stat-total">–</strong></span>
+  <span>Last updated: <strong id="stat-date">–</strong></span>
+</div>
+
+<main>
+  <div id="card-view"></div>
+  <div id="table-view">
+    <table id="papers-table" class="display">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Authors</th>
+          <th>Journal</th>
+          <th>Date</th>
+          <th>Method</th>
+          <th>Age</th>
+          <th>Keywords</th>
+        </tr>
+      </thead>
+      <tbody id="table-body"></tbody>
+    </table>
+  </div>
+  <div class="empty-state" id="empty-state" style="display:none">
+    No papers match your current filters.
+  </div>
+</main>
+
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script>
+let allPapers = [];
+let filteredPapers = [];
+let activeKeywords = new Set();
+let dataTable = null;
+let currentView = 'card';
+
+const KW_CLASS_MAP = {
+  'EEG': 'kw-eeg',
+  'fMRI': 'kw-fmri',
+  'Behavioral': 'kw-behavioral',
+  'Eye-tracking': 'kw-eye-tracking',
+  'RS-Oscillatory': 'kw-rs-oscillatory',
+  'RS-fMRI': 'kw-rs-fmri',
+  'Connectivity': 'kw-connectivity',
+  'ERP': 'kw-erp',
+  'Early Adversity': 'kw-early-adversity',
+  'Autism': 'kw-autism',
+  'Down Syndrome': 'kw-down-syndrome',
+  'Typical Dev': 'kw-typical-dev',
+  'Trajectory': 'kw-trajectory',
+  'Multivariate': 'kw-multivariate',
+  '0-12mo': 'kw-age',
+  '12-36mo': 'kw-age',
+  '3-5yr': 'kw-age',
+};
+
+function kwClass(kw) {
+  return KW_CLASS_MAP[kw] || 'tag';
+}
+
+function renderTags(keywords) {
+  return (keywords || []).map(kw => {
+    const cls = kwClass(kw);
+    const isAge = ['0-12mo','12-36mo','3-5yr'].includes(kw);
+    return `<span class="tag ${isAge ? 'age' : ''} ${cls}">${kw}</span>`;
+  }).join('');
+}
+
+function renderCard(p) {
+  const isPriority = p.priority_author === true || p.priority_author === 'true';
+  const abstract = p.abstract || '';
+  const isLong = abstract.length > 200;
+  return `
+    <div class="paper-card ${isPriority ? 'priority' : ''}" data-id="${p.id}">
+      <div class="card-header">
+        <div class="card-title">
+          <a href="${p.doi_url}" target="_blank" rel="noopener">${p.title}</a>
+        </div>
+        ${isPriority ? '<span class="priority-badge">★ Priority</span>' : ''}
+      </div>
+      <div class="card-authors">${p.authors || ''}</div>
+      <div class="card-institution">${p.institution || ''}</div>
+      <div class="card-meta">
+        <strong>${p.journal || ''}</strong>
+        ${p.date ? ' · ' + p.date : ''}
+        ${p.preprint ? ' · <em>' + p.preprint + '</em>' : ''}
+      </div>
+      ${isLong ? `
+        <div class="card-abstract" onclick="this.classList.toggle('expanded')">${abstract}</div>
+      ` : `<div class="card-abstract expanded">${abstract}</div>`}
+      <div class="card-tags">
+        <span class="tag method">${p.method || ''}</span>
+        ${renderTags(p.keywords)}
+      </div>
+      <div class="card-footer">
+        <span>Age: ${p.age_range || '–'}</span>
+        <a href="${p.doi_url}" target="_blank" rel="noopener">DOI ↗</a>
+      </div>
+    </div>
+  `;
+}
+
+function renderCards(papers) {
+  const container = document.getElementById('card-view');
+  if (!papers.length) {
+    container.innerHTML = '';
+    document.getElementById('empty-state').style.display = 'block';
+    return;
+  }
+  document.getElementById('empty-state').style.display = 'none';
+  container.innerHTML = papers.map(renderCard).join('');
+}
+
+function renderTable(papers) {
+  const tbody = document.getElementById('table-body');
+  tbody.innerHTML = papers.map(p => `
+    <tr>
+      <td class="table-title">
+        <a href="${p.doi_url}" target="_blank" rel="noopener">${p.title}</a>
+        ${p.priority_author ? ' <span class="priority-badge">★</span>' : ''}
+      </td>
+      <td>${p.first_author_short || p.authors || ''}</td>
+      <td>${p.journal || ''}</td>
+      <td style="white-space:nowrap">${p.date || ''}</td>
+      <td>${p.method || ''}</td>
+      <td style="white-space:nowrap">${p.age_range || ''}</td>
+      <td>${renderTags(p.keywords)}</td>
+    </tr>
+  `).join('');
+
+  if (dataTable) { dataTable.destroy(); dataTable = null; }
+  if (papers.length) {
+    dataTable = $('#papers-table').DataTable({
+      pageLength: 25,
+      order: [[3, 'desc']],
+      columnDefs: [{ orderable: false, targets: [6] }]
+    });
+  }
+}
+
+function updateStats(shown) {
+  document.getElementById('stat-showing').textContent = shown;
+  document.getElementById('stat-total').textContent = allPapers.length;
+  const dates = allPapers.map(p => p.report_date).filter(Boolean).sort();
+  document.getElementById('stat-date').textContent = dates.length ? dates[dates.length - 1] : '–';
+}
+
+function applyFilters() {
+  const search = document.getElementById('search-box').value.toLowerCase().trim();
+  const method = document.getElementById('filter-method').value;
+  const age = document.getElementById('filter-age').value;
+  const month = document.getElementById('filter-month').value;
+  const priority = document.getElementById('filter-priority').value;
+
+  filteredPapers = allPapers.filter(p => {
+    if (method && (p.method || '').indexOf(method) === -1) return false;
+    if (age && !(p.keywords || []).includes(age)) return false;
+    if (month && p.month !== month) return false;
+    if (priority === 'true' && !(p.priority_author === true || p.priority_author === 'true')) return false;
+    if (activeKeywords.size > 0) {
+      const pkw = p.keywords || [];
+      for (const kw of activeKeywords) {
+        if (!pkw.includes(kw)) return false;
+      }
+    }
+    if (search) {
+      const haystack = [p.title, p.authors, p.institution, p.journal, (p.keywords || []).join(' ')].join(' ').toLowerCase();
+      if (!haystack.includes(search)) return false;
+    }
+    return true;
+  });
+
+  if (currentView === 'card') {
+    renderCards(filteredPapers);
+  } else {
+    renderTable(filteredPapers);
+  }
+  updateStats(filteredPapers.length);
+}
+
+function toggleKw(el) {
+  const kw = el.dataset.kw;
+  if (activeKeywords.has(kw)) {
+    activeKeywords.delete(kw);
+    el.classList.remove('active');
+  } else {
+    activeKeywords.add(kw);
+    el.classList.add('active');
+  }
+  applyFilters();
+}
+
+function setView(view) {
+  currentView = view;
+  document.getElementById('card-view').style.display = view === 'card' ? 'grid' : 'none';
+  document.getElementById('table-view').style.display = view === 'table' ? 'block' : 'none';
+  document.getElementById('btn-card').classList.toggle('active', view === 'card');
+  document.getElementById('btn-table').classList.toggle('active', view === 'table');
+  if (view === 'table') renderTable(filteredPapers);
+  else renderCards(filteredPapers);
+}
+
+// Wire up controls
+['search-box','filter-method','filter-age','filter-month','filter-priority'].forEach(id => {
+  document.getElementById(id).addEventListener('input', applyFilters);
+  document.getElementById(id).addEventListener('change', applyFilters);
+});
+
+// Load data
+fetch('data/papers.json')
+  .then(r => r.json())
+  .then(data => {
+    allPapers = data.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    applyFilters();
+  })
+  .catch(err => {
+    document.getElementById('card-view').innerHTML =
+      '<p style="color:red;padding:2rem">Error loading papers.json: ' + err + '</p>';
+  });
+</script>
+</body>
+</html>
