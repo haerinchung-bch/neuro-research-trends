@@ -7,340 +7,428 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 <style>
 *{box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;margin:0;background:#f8fafc;color:#1a202c}
-.header{background:linear-gradient(135deg,#1a365d,#2c5282);color:white;padding:36px 40px}
-.header h1{margin:0 0 6px 0;font-size:1.9em}
-.header p{margin:0;opacity:.8;font-size:.95em}
-.container{max-width:1500px;margin:0 auto;padding:28px 24px}
-.filters{background:white;border-radius:10px;padding:20px 24px;margin-bottom:20px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
-.filters h3{margin:0 0 16px 0;color:#1a365d;font-size:1em;text-transform:uppercase;letter-spacing:.05em}
-.filter-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
-.filter-group label{display:block;font-size:.78em;font-weight:600;color:#4a5568;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
-.filter-group select,.filter-group input{width:100%;padding:8px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:.88em;background:white;color:#1a202c}
-.kw-section{margin-top:18px}
-.kw-group{margin-bottom:12px}
-.kw-group-label{font-size:.72em;font-weight:700;color:#718096;text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px}
-.keyword-chips{display:flex;flex-wrap:wrap;gap:7px}
-.keyword-chip{padding:4px 12px;border-radius:20px;border:1.5px solid #bee3f8;background:white;color:#2c5282;font-size:.8em;font-weight:500;cursor:pointer;transition:all .15s;user-select:none}
-.keyword-chip:hover{background:#ebf8ff}
-.keyword-chip.active{background:#2c5282;color:white;border-color:#2c5282}
-.kw-group.modality .keyword-chip{border-color:#c6f6d5;color:#276749}
-.kw-group.modality .keyword-chip:hover{background:#f0fff4}
-.kw-group.modality .keyword-chip.active{background:#276749;border-color:#276749;color:white}
-.kw-group.age .keyword-chip{border-color:#fed7aa;color:#9c4221}
-.kw-group.age .keyword-chip:hover{background:#fffaf0}
-.kw-group.age .keyword-chip.active{background:#c05621;border-color:#c05621;color:white}
-.kw-group.diagnosis .keyword-chip{border-color:#e9d8fd;color:#553c9a}
-.kw-group.diagnosis .keyword-chip:hover{background:#faf5ff}
-.kw-group.diagnosis .keyword-chip.active{background:#553c9a;border-color:#553c9a;color:white}
-.kw-group.paradigm .keyword-chip{border-color:#b2f5ea;color:#234e52}
-.kw-group.paradigm .keyword-chip:hover{background:#e6fffa}
-.kw-group.paradigm .keyword-chip.active{background:#234e52;border-color:#234e52;color:white}
-.kw-group.feature .keyword-chip{border-color:#fecaca;color:#991b1b}
-.kw-group.feature .keyword-chip:hover{background:#fff1f2}
-.kw-group.feature .keyword-chip.active{background:#991b1b;border-color:#991b1b;color:white}
-.kw-group.analysis .keyword-chip{border-color:#bee3f8;color:#2c5282}
-.kw-group.analysis .keyword-chip:hover{background:#ebf8ff}
-.kw-group.analysis .keyword-chip.active{background:#2c5282;border-color:#2c5282;color:white}
-.stats-bar{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px}
-.stat{background:white;border:1px solid #e2e8f0;border-radius:8px;padding:10px 18px;text-align:center;min-width:90px}
-.stat .num{font-size:1.7em;font-weight:bold;color:#2c5282}
-.stat .label{font-size:.75em;color:#718096}
-.reset-btn{padding:8px 18px;background:#e2e8f0;border:none;border-radius:6px;cursor:pointer;font-size:.85em;color:#4a5568;font-weight:500}
-.reset-btn:hover{background:#cbd5e0}
-.fav-filter-btn{padding:8px 18px;border:1.5px solid #f6ad55;background:white;border-radius:6px;cursor:pointer;font-size:.85em;color:#c05621;font-weight:500}
-.fav-filter-btn:hover{background:#fffaf0}
-.fav-filter-btn.active{background:#c05621;color:white;border-color:#c05621}
-.fav-star{color:#cbd5e0;cursor:pointer;font-size:1.15em;user-select:none;transition:color .15s;line-height:1}
-.fav-star:hover{color:#f6e05e}
-.fav-star.active{color:#f6ad55}
-.section{background:white;border-radius:10px;padding:24px;margin-bottom:20px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
-#tableView table.dataTable{width:100%!important;font-size:.83em}
-#tableView table.dataTable th{background:#ebf8ff;color:#1a365d;white-space:nowrap}
-.check{color:#276749}
-.preprint-badge{background:#fef3c7;color:#92400e;padding:1px 7px;border-radius:10px;font-size:.76em;font-weight:600}
-.priority-badge{background:#fce7f3;color:#9d174d;padding:1px 7px;border-radius:10px;font-size:.76em;font-weight:600}
-.paper-card{border:1px solid #e2e8f0;border-radius:8px;padding:18px;margin-bottom:14px;transition:border-color .15s,box-shadow .15s}
-.paper-card:hover{border-color:#90cdf4;box-shadow:0 2px 8px rgba(0,0,0,.06)}
-.paper-title-link{font-size:1em;font-weight:600;color:#2c5282;text-decoration:none;line-height:1.4}
-.paper-title-link:hover{text-decoration:underline}
-.paper-meta{font-size:.83em;color:#718096;margin:6px 0}
-.paper-authors{font-size:.85em;color:#4a5568;margin:5px 0}
-.paper-info{font-size:.82em;color:#718096;margin:4px 0}
-.tags{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0}
-.tag{padding:2px 9px;border-radius:12px;font-size:.76em;font-weight:500}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;margin:0;background:#f0f4f8;color:#1a202c}
+
+/* Header */
+.header{background:linear-gradient(135deg,#1a365d 0%,#2d6a9f 100%);color:white;padding:26px 40px}
+.header-inner{max-width:1400px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.header h1{margin:0 0 3px;font-size:1.5em;font-weight:700;letter-spacing:-.01em}
+.header-sub{font-size:.8em;opacity:.7;margin:0;line-height:1.6}
+.header-link{font-size:.8em;color:rgba(255,255,255,.85);text-decoration:none;border:1px solid rgba(255,255,255,.3);border-radius:6px;padding:6px 14px;white-space:nowrap;transition:background .15s;flex-shrink:0}
+.header-link:hover{background:rgba(255,255,255,.12)}
+
+/* Layout */
+.container{max-width:1400px;margin:0 auto;padding:18px 24px}
+
+/* Filter panel */
+.filter-panel{background:white;border-radius:10px;padding:14px 18px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.07)}
+.filter-primary{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.fg{display:flex;flex-direction:column;gap:4px}
+.fg.grow{flex:1;min-width:180px}
+.fg label{font-size:.7em;font-weight:700;color:#a0aec0;text-transform:uppercase;letter-spacing:.06em}
+.fg select,.fg input{padding:6px 10px;border:1px solid #e2e8f0;border-radius:6px;font-size:.85em;color:#1a202c;height:32px;background:white}
+.pill-row{display:flex;gap:5px;align-items:center;height:32px}
+.pill{padding:4px 11px;border-radius:20px;border:1.5px solid #e2e8f0;background:white;color:#718096;font-size:.75em;font-weight:700;cursor:pointer;transition:all .15s;white-space:nowrap;line-height:1}
+.pill:hover{border-color:#90cdf4;color:#2c5282}
+.pill.active.pp{background:#92400e;color:white;border-color:#92400e}
+.pill.active.pr{background:#9d174d;color:white;border-color:#9d174d}
+.pill.active.fv{background:#c05621;color:white;border-color:#c05621}
+.reset-btn{height:32px;padding:0 13px;background:#f0f4f8;border:none;border-radius:6px;cursor:pointer;font-size:.78em;font-weight:700;color:#718096;transition:background .15s;align-self:flex-end;white-space:nowrap}
+.reset-btn:hover{background:#e2e8f0}
+
+/* Advanced filters */
+.adv-section{margin-top:10px;padding-top:10px;border-top:1px solid #f0f4f8}
+.adv-btn{background:none;border:none;color:#a0aec0;font-size:.72em;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:4px;padding:0;text-transform:uppercase;letter-spacing:.06em;transition:color .15s}
+.adv-btn:hover{color:#4a5568}
+.adv-btn .arr{transition:transform .2s;line-height:1}
+.adv-btn.open .arr{transform:rotate(90deg)}
+.adv-body{display:none;margin-top:10px}
+.adv-body.open{display:block}
+.chip-rows{display:flex;flex-direction:column;gap:8px}
+.chip-row{display:flex;flex-wrap:wrap;gap:12px}
+.chip-group{min-width:150px}
+.cg-label{font-size:.67em;font-weight:700;color:#cbd5e0;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}
+.chips{display:flex;flex-wrap:wrap;gap:4px}
+.chip{padding:3px 9px;border-radius:14px;border:1.5px solid #e2e8f0;background:white;color:#4a5568;font-size:.74em;font-weight:600;cursor:pointer;transition:all .15s;user-select:none}
+.chip:hover{border-color:#90cdf4;color:#2c5282}
+.chip.on{background:#2c5282;color:white;border-color:#2c5282}
+.cg.mod .chip{border-color:#c6f6d5;color:#276749}
+.cg.mod .chip:hover{background:#f0fff4}
+.cg.mod .chip.on{background:#276749;border-color:#276749;color:white}
+.cg.age .chip{border-color:#fed7aa;color:#9c4221}
+.cg.age .chip:hover{background:#fffaf0}
+.cg.age .chip.on{background:#c05621;border-color:#c05621;color:white}
+.cg.dx .chip{border-color:#e9d8fd;color:#553c9a}
+.cg.dx .chip:hover{background:#faf5ff}
+.cg.dx .chip.on{background:#553c9a;border-color:#553c9a;color:white}
+.cg.par .chip{border-color:#b2f5ea;color:#234e52}
+.cg.par .chip:hover{background:#e6fffa}
+.cg.par .chip.on{background:#234e52;border-color:#234e52;color:white}
+.cg.feat .chip{border-color:#fecaca;color:#991b1b}
+.cg.feat .chip:hover{background:#fff1f2}
+.cg.feat .chip.on{background:#991b1b;border-color:#991b1b;color:white}
+.cg.ana .chip{border-color:#bee3f8;color:#2c5282}
+.cg.ana .chip:hover{background:#ebf8ff}
+.cg.ana .chip.on{background:#2c5282;border-color:#2c5282;color:white}
+
+/* Toolbar */
+.toolbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.stats{display:flex;gap:6px;align-items:baseline;flex-wrap:wrap}
+.stat-num{font-size:1.15em;font-weight:700;color:#2c5282}
+.stat-lbl{font-size:.73em;color:#a0aec0}
+.stat-dot{color:#cbd5e0;margin:0 2px}
+.stat-num.fav{color:#c05621}
+.view-tog{display:flex;gap:5px}
+.vbtn{padding:5px 14px;border:1.5px solid #e2e8f0;background:white;border-radius:6px;cursor:pointer;font-size:.8em;color:#4a5568;font-weight:700;transition:all .15s}
+.vbtn.on{background:#1a365d;color:white;border-color:#1a365d}
+
+/* Table */
+.tbl-wrap{background:white;border-radius:10px;padding:16px 20px;box-shadow:0 1px 3px rgba(0,0,0,.07)}
+#paperTable.dataTable{width:100%!important;font-size:.82em}
+#paperTable.dataTable th{background:#f7fafc;color:#4a5568;font-size:.72em;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;padding:9px 8px}
+#paperTable.dataTable td{vertical-align:top;padding:9px 8px;border-bottom:1px solid #f7fafc}
+.ptitle{color:#2c5282;font-weight:600;text-decoration:none;line-height:1.35;display:block;font-size:.95em}
+.ptitle:hover{text-decoration:underline}
+.pmeta{font-size:.74em;color:#a0aec0;margin-top:2px;line-height:1.4}
+.tag-cell{display:flex;flex-wrap:wrap;gap:3px;max-width:260px}
+.tag{padding:1px 6px;border-radius:9px;font-size:.7em;font-weight:600;white-space:nowrap}
 .tag.modality{background:#f0fff4;color:#276749}
 .tag.age{background:#fffaf0;color:#9c4221}
 .tag.diagnosis{background:#faf5ff;color:#553c9a}
 .tag.paradigm{background:#e6fffa;color:#234e52}
 .tag.feature{background:#fff1f2;color:#9f1239}
 .tag.analysis{background:#e8f4fd;color:#1a6b9a}
-details{margin-top:8px}
-summary{cursor:pointer;color:#2c5282;font-size:.85em;font-weight:500;padding:4px 0}
-summary:hover{color:#1a365d}
-.abstract-text{font-size:.85em;line-height:1.7;color:#4a5568;background:#f7fafc;padding:12px 16px;border-left:3px solid #bee3f8;margin-top:8px;border-radius:0 4px 4px 0}
-.figure-text{font-size:.83em;color:#4a5568;background:#fffff0;padding:10px 14px;border-left:3px solid #f6e05e;margin-top:8px;border-radius:0 4px 4px 0}
-.view-toggle{display:flex;gap:8px;margin-bottom:16px}
-.view-btn{padding:7px 16px;border:1.5px solid #bee3f8;background:white;border-radius:6px;cursor:pointer;font-size:.85em;color:#2c5282;font-weight:500}
-.view-btn.active{background:#2c5282;color:white;border-color:#2c5282}
+.pp-badge{background:#fef3c7;color:#92400e;padding:1px 6px;border-radius:9px;font-size:.7em;font-weight:700;white-space:nowrap}
+.pr-badge{background:#fce7f3;color:#9d174d;padding:1px 6px;border-radius:9px;font-size:.7em;font-weight:700}
+.fav-star{color:#e2e8f0;cursor:pointer;font-size:1.05em;user-select:none;transition:color .15s}
+.fav-star:hover{color:#f6e05e}
+.fav-star.on{color:#f6ad55}
+
+/* Cards */
 #cardView{display:none}
-#no-results{display:none;text-align:center;padding:40px;color:#718096}
+.paper-card{border:1px solid #e2e8f0;border-radius:8px;padding:16px 18px;margin-bottom:10px;background:white;transition:border-color .15s,box-shadow .15s}
+.paper-card:hover{border-color:#90cdf4;box-shadow:0 2px 8px rgba(0,0,0,.05)}
+.card-title{font-size:.97em;font-weight:600;color:#2c5282;text-decoration:none;line-height:1.4}
+.card-title:hover{text-decoration:underline}
+.card-meta{font-size:.8em;color:#718096;margin:5px 0}
+.card-authors{font-size:.82em;color:#4a5568;margin:3px 0}
+.card-info{font-size:.78em;color:#a0aec0;margin:3px 0}
+.card-tags{display:flex;flex-wrap:wrap;gap:4px;margin:7px 0}
+details{margin-top:7px}
+summary{cursor:pointer;color:#4a5568;font-size:.82em;font-weight:700;padding:2px 0;list-style:none;user-select:none}
+summary::-webkit-details-marker{display:none}
+summary::before{content:'▶ ';font-size:.68em;vertical-align:middle;display:inline-block;transition:transform .15s}
+details[open] summary::before{content:'▼ '}
+summary:hover{color:#2c5282}
+.abs-body{font-size:.83em;line-height:1.7;color:#4a5568;background:#f7fafc;padding:10px 14px;border-left:3px solid #bee3f8;margin-top:6px;border-radius:0 4px 4px 0}
+.fig-body{font-size:.81em;color:#4a5568;background:#fffff0;padding:9px 13px;border-left:3px solid #f6e05e;margin-top:6px;border-radius:0 4px 4px 0}
+.pub-link{font-size:.78em;color:#2c5282;text-decoration:none;margin-top:7px;display:inline-block}
+.pub-link:hover{text-decoration:underline}
+
+/* No results */
+#no-results{display:none;text-align:center;padding:52px 24px;background:white;border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,.07);color:#a0aec0}
+#no-results strong{display:block;font-size:1.1em;color:#4a5568;margin-bottom:6px}
+.nr-reset{color:#2c5282;cursor:pointer;text-decoration:underline;background:none;border:none;font-size:inherit;padding:0}
 </style>
 </head>
 <body>
+
 <div class="header">
-  <h1>Developmental Cognitive Neuroscience Research Trends</h1>
-  <p>EEG &middot; fMRI &middot; Autism &middot; Down Syndrome &middot; Trajectories &middot; Multivariate &middot; Early Adversity</p>
-  <p style="margin-top:10px;font-size:.85em;opacity:.9">
-    <a href="https://github.com/haerinchung-bch/neuro-research-trends/tree/main/reports" target="_blank" style="color:white;text-decoration:underline">&#128196; Download weekly reports (PDF &amp; Markdown)</a>
-  </p>
+  <div class="header-inner">
+    <div>
+      <h1>Developmental Cognitive Neuroscience — Research Trends</h1>
+      <p class="header-sub">EEG &middot; fMRI &middot; fNIRS &middot; Autism &middot; Down Syndrome &middot; Early Adversity &middot; Trajectories &middot; Multivariate</p>
+    </div>
+    <a class="header-link" href="https://github.com/haerinchung-bch/neuro-research-trends/tree/main/reports" target="_blank">&#128196; Download Reports</a>
+  </div>
 </div>
+
 <div class="container">
-  <div class="filters">
-    <h3>Filter Papers</h3>
-    <div class="filter-grid">
-      <div class="filter-group"><label>Year</label><select id="filterYear"><option value="">All years</option></select></div>
-      <div class="filter-group"><label>Month</label><select id="filterMonth"><option value="">All months</option></select></div>
-      <div class="filter-group"><label>Journal</label><select id="filterJournal"><option value="">All journals</option></select></div>
-      <div class="filter-group"><label>Method</label><select id="filterMethod"><option value="">All methods</option></select></div>
-      <div class="filter-group"><label>Paradigm</label><select id="filterParadigm"><option value="">All paradigms</option></select></div>
-      <div class="filter-group"><label>Preprint</label><select id="filterPreprint"><option value="">All</option><option value="peer-reviewed">Peer-reviewed only</option><option value="preprint">Preprints only</option></select></div>
-      <div class="filter-group"><label>Priority Author</label><select id="filterPriority"><option value="">All</option><option value="yes">Priority authors only</option></select></div>
-      <div class="filter-group"><label>Search</label><input type="text" id="filterSearch" placeholder="Title, author, keyword..."></div>
+
+  <div class="filter-panel">
+    <div class="filter-primary">
+      <div class="fg grow">
+        <label>Search</label>
+        <input type="text" id="filterSearch" placeholder="Title, author, keyword…">
+      </div>
+      <div class="fg">
+        <label>Month</label>
+        <select id="filterMonth"><option value="">All months</option></select>
+      </div>
+      <div class="fg">
+        <label>Journal</label>
+        <select id="filterJournal"><option value="">All journals</option></select>
+      </div>
+      <div class="fg">
+        <label>Show only</label>
+        <div class="pill-row">
+          <button class="pill pp" id="btnPp" onclick="togglePill('pp')">Preprints</button>
+          <button class="pill pr" id="btnPr" onclick="togglePill('pr')">★ Priority</button>
+          <button class="pill fv" id="btnFv" onclick="togglePill('fv')">&#9825; Saved</button>
+        </div>
+      </div>
+      <button class="reset-btn" onclick="resetFilters()">Reset</button>
     </div>
-    <div class="kw-section">
-      <div class="kw-group modality">
-        <div class="kw-group-label">Modality</div>
-        <div class="keyword-chips" id="chips-modality"></div>
+
+    <div class="adv-section">
+      <button class="adv-btn" id="advBtn" onclick="toggleAdv()">
+        <span class="arr">&#9654;</span> Advanced filters
+      </button>
+      <div class="adv-body" id="advBody">
+        <div class="chip-rows">
+          <div class="chip-row">
+            <div class="chip-group cg mod">
+              <div class="cg-label">Modality</div>
+              <div class="chips" id="cg-modality"></div>
+            </div>
+            <div class="chip-group cg age">
+              <div class="cg-label">Age range</div>
+              <div class="chips" id="cg-age"></div>
+            </div>
+            <div class="chip-group cg dx">
+              <div class="cg-label">Group</div>
+              <div class="chips" id="cg-diagnosis"></div>
+            </div>
+          </div>
+          <div class="chip-row">
+            <div class="chip-group cg par">
+              <div class="cg-label">Paradigm</div>
+              <div class="chips" id="cg-paradigm"></div>
+            </div>
+            <div class="chip-group cg feat">
+              <div class="cg-label">Signal feature</div>
+              <div class="chips" id="cg-feature"></div>
+            </div>
+            <div class="chip-group cg ana">
+              <div class="cg-label">Analysis type</div>
+              <div class="chips" id="cg-analysis"></div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="kw-group age">
-        <div class="kw-group-label">Age</div>
-        <div class="keyword-chips" id="chips-age"></div>
-      </div>
-      <div class="kw-group diagnosis">
-        <div class="kw-group-label">Diagnosis / Group</div>
-        <div class="keyword-chips" id="chips-diagnosis"></div>
-      </div>
-      <div class="kw-group paradigm">
-        <div class="kw-group-label">Paradigm / Task</div>
-        <div class="keyword-chips" id="chips-paradigm"></div>
-      </div>
-      <div class="kw-group feature">
-        <div class="kw-group-label">Feature</div>
-        <div class="keyword-chips" id="chips-feature"></div>
-      </div>
-      <div class="kw-group analysis">
-        <div class="kw-group-label">Analysis / Model</div>
-        <div class="keyword-chips" id="chips-analysis"></div>
-      </div>
-    </div>
-    <div style="margin-top:14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-      <button class="reset-btn" onclick="resetFilters()">Reset all filters</button>
-      <button class="fav-filter-btn" id="btnFavFilter" onclick="toggleFavFilter()">★ Show favorites</button>
     </div>
   </div>
-  <div class="stats-bar">
-    <div class="stat"><div class="num" id="statTotal">-</div><div class="label">Showing</div></div>
-    <div class="stat"><div class="num" id="statEEG">-</div><div class="label">EEG</div></div>
-    <div class="stat"><div class="num" id="statFMRI">-</div><div class="label">fMRI</div></div>
-    <div class="stat"><div class="num" id="statPreprints">-</div><div class="label">Preprints</div></div>
-    <div class="stat"><div class="num" id="statPriority">-</div><div class="label">Priority</div></div>
-    <div class="stat"><div class="num" id="statFavs" style="color:#c05621">-</div><div class="label">★ Saved</div></div>
+
+  <div class="toolbar">
+    <div class="stats">
+      <span class="stat-num" id="sTotal">—</span><span class="stat-lbl">papers</span>
+      <span class="stat-dot">·</span>
+      <span class="stat-num" id="sEEG">—</span><span class="stat-lbl">EEG</span>
+      <span class="stat-dot">·</span>
+      <span class="stat-num" id="sFMRI">—</span><span class="stat-lbl">fMRI</span>
+      <span class="stat-dot">·</span>
+      <span class="stat-num" id="sPP">—</span><span class="stat-lbl">preprints</span>
+      <span class="stat-dot">·</span>
+      <span class="stat-num" id="sPR">—</span><span class="stat-lbl">priority</span>
+      <span class="stat-dot">·</span>
+      <span class="stat-num fav" id="sFav">—</span><span class="stat-lbl">saved</span>
+    </div>
+    <div class="view-tog">
+      <button class="vbtn on" id="vbTable" onclick="setView('table')">Table</button>
+      <button class="vbtn" id="vbCard" onclick="setView('card')">Cards</button>
+    </div>
   </div>
-  <div class="view-toggle">
-    <button class="view-btn active" id="btnTable" onclick="setView('table')">Table View</button>
-    <button class="view-btn" id="btnCard" onclick="setView('card')">Card View</button>
-  </div>
-  <div class="section" id="tableView">
+
+  <div class="tbl-wrap" id="tableView">
     <table id="paperTable" class="display" style="width:100%">
       <thead><tr>
-        <th title="Favorite">★</th><th>#</th><th>Paper</th><th>Journal</th><th>Year</th><th>Month</th>
-        <th title="EEG">EEG</th><th title="fMRI">fMRI</th><th title="fNIRS">fNIRS</th><th title="Behavioral">Behav</th><th title="Eye-tracking">Eye</th>
-        <th title="0-12 months">0-12m</th><th title="12-36 months">12-36m</th><th title="3-5 years">3-5yr</th>
-        <th title="Autism">ASD</th><th title="Down Syndrome">DS</th><th title="Early Adversity">EA</th><th title="Typical Dev">TD</th>
-        <th title="RS-Oscillatory">RS-Osc</th><th title="RS-fMRI">RS-fMRI</th><th title="ERP">ERP</th><th title="Power">Power</th><th title="Connectivity">Conn</th><th title="Trajectory">Traj</th><th title="Predictive">Pred</th><th title="Concurrent">Conc</th><th title="Multivariate">Multi</th>
-        <th>Preprint</th><th>Priority</th>
+        <th style="width:28px">★</th>
+        <th style="width:30px">#</th>
+        <th>Paper</th>
+        <th>Journal</th>
+        <th>Date</th>
+        <th>Age</th>
+        <th>Tags</th>
+        <th>Status</th>
       </tr></thead>
       <tbody id="tableBody"></tbody>
     </table>
   </div>
+
   <div id="cardView"><div id="cardContainer"></div></div>
-  <div id="no-results"><p>No papers match the current filters.</p></div>
+
+  <div id="no-results">
+    <strong>No papers match these filters.</strong>
+    <span>Try <button class="nr-reset" onclick="resetFilters()">resetting all filters</button> to see everything.</span>
+  </div>
+
 </div>
+
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script>
 const KW_GROUPS = [
-  {id:'modality', label:'Modality',        keywords:['EEG','fMRI','fNIRS','Behavioral','Eye-tracking']},
-  {id:'age',      label:'Age',             keywords:['0-12mo','12-36mo','3-5yr']},
-  {id:'diagnosis',label:'Diagnosis / Group', keywords:['Autism','Down Syndrome','Early Adversity','Typical Dev']},
-  {id:'paradigm', label:'Paradigm / Task', keywords:['RS-Oscillatory','RS-fMRI','ERP']},
-  {id:'feature',  label:'Feature',         keywords:['Power','Connectivity','Coherence','Phase-Amplitude Coupling']},
-  {id:'analysis', label:'Analysis / Model',keywords:['Trajectory','Predictive','Concurrent','Multivariate']}
+  {id:'modality',  cls:'mod', keywords:['EEG','fMRI','fNIRS','Behavioral','Eye-tracking']},
+  {id:'age',       cls:'age', keywords:['0-12mo','12-36mo','3-5yr']},
+  {id:'diagnosis', cls:'dx',  keywords:['Autism','Down Syndrome','Early Adversity','Typical Dev']},
+  {id:'paradigm',  cls:'par', keywords:['RS-Oscillatory','RS-fMRI','ERP']},
+  {id:'feature',   cls:'feat',keywords:['Power','Connectivity','Coherence','Phase-Amplitude Coupling']},
+  {id:'analysis',  cls:'ana', keywords:['Trajectory','Predictive','Concurrent','Multivariate']}
 ];
-const ALL_KEYWORDS = KW_GROUPS.flatMap(g=>g.keywords);
-const KW_TABLE_ORDER = ['EEG','fMRI','fNIRS','Behavioral','Eye-tracking','0-12mo','12-36mo','3-5yr','Autism','Down Syndrome','Early Adversity','Typical Dev','RS-Oscillatory','RS-fMRI','ERP','Power','Connectivity','Trajectory','Predictive','Concurrent','Multivariate'];
 const KW_GROUP_MAP = {};
-KW_GROUPS.forEach(g=>g.keywords.forEach(k=>KW_GROUP_MAP[k]=g.id));
+KW_GROUPS.forEach(g => g.keywords.forEach(k => KW_GROUP_MAP[k] = g.id));
 
-let allPapers=[],activeKeywords=new Set(),dataTable=null,currentView='table';
-let favorites=new Set(JSON.parse(localStorage.getItem('nrt_favs')||'[]'));
-let showFavOnly=false;
+let allPapers = [], activeKW = new Set(), dt = null, view = 'table';
+let favs = new Set(JSON.parse(localStorage.getItem('nrt_favs') || '[]'));
+let pills = {pp: false, pr: false, fv: false};
+
+function tagCls(k){ return KW_GROUP_MAP[k] || 'analysis'; }
+function has(p,k){ return (p.keywords||[]).includes(k); }
 
 function toggleFav(id){
-  if(favorites.has(id)){favorites.delete(id);}else{favorites.add(id);}
-  localStorage.setItem('nrt_favs',JSON.stringify([...favorites]));
+  favs.has(id) ? favs.delete(id) : favs.add(id);
+  localStorage.setItem('nrt_favs', JSON.stringify([...favs]));
   render();
 }
-function toggleFavFilter(){
-  showFavOnly=!showFavOnly;
-  document.getElementById('btnFavFilter').classList.toggle('active',showFavOnly);
+function togglePill(name){
+  pills[name] = !pills[name];
+  document.getElementById('btn'+name.charAt(0).toUpperCase()+name.slice(1)).classList.toggle('active', pills[name]);
   render();
 }
-function ck(v){return v?'<span class="check">&#10004;</span>':''}
-function has(p,kw){return(p.keywords||[]).includes(kw)}
+function toggleAdv(){
+  document.getElementById('advBtn').classList.toggle('open');
+  document.getElementById('advBody').classList.toggle('open');
+}
 
 async function init(){
-  const res=await fetch('data/papers.json?v='+Date.now());
-  allPapers=await res.json();
-  allPapers.sort((a,b)=>b.date.localeCompare(a.date));
-  populateFilterOptions();
-  buildKeywordChips();
+  const res = await fetch('data/papers.json?v=' + Date.now());
+  allPapers = await res.json();
+  allPapers.sort((a,b) => b.date.localeCompare(a.date));
+  populateSelects();
+  buildChips();
+  // Default to latest month in data
+  const latest = allPapers[0]?.month;
+  if(latest) document.getElementById('filterMonth').value = latest;
   render();
 }
 
-function populateFilterOptions(){
-  const fill=(id,items)=>{const s=document.getElementById(id);items.forEach(v=>{const o=document.createElement('option');o.value=v;o.textContent=v;s.appendChild(o);})};
-  fill('filterYear',[...new Set(allPapers.map(p=>p.year))].sort((a,b)=>b-a));
-  fill('filterMonth',[...new Set(allPapers.map(p=>p.month))].sort((a,b)=>b.localeCompare(a)));
-  fill('filterJournal',[...new Set(allPapers.map(p=>p.journal))].sort());
-  fill('filterMethod',[...new Set(allPapers.map(p=>p.method))].sort());
-  fill('filterParadigm',[...new Set(allPapers.map(p=>p.paradigm).filter(Boolean))].sort());
+function populateSelects(){
+  const fill = (id, items) => {
+    const s = document.getElementById(id);
+    items.forEach(v => { const o = document.createElement('option'); o.value = v; o.textContent = v; s.appendChild(o); });
+  };
+  fill('filterMonth', [...new Set(allPapers.map(p => p.month))].sort((a,b) => b.localeCompare(a)));
+  fill('filterJournal', [...new Set(allPapers.map(p => p.journal))].sort());
 }
 
-function buildKeywordChips(){
-  KW_GROUPS.forEach(g=>{
-    const container=document.getElementById('chips-'+g.id);
-    g.keywords.forEach(kw=>{
-      const d=document.createElement('span');
-      d.className='keyword-chip';
-      d.textContent=kw;
-      d.dataset.kw=kw;
-      d.onclick=()=>{
-        if(activeKeywords.has(kw)){activeKeywords.delete(kw);d.classList.remove('active');}
-        else{activeKeywords.add(kw);d.classList.add('active');}
+function buildChips(){
+  KW_GROUPS.forEach(g => {
+    const el = document.getElementById('cg-' + g.id);
+    g.keywords.forEach(kw => {
+      const d = document.createElement('span');
+      d.className = 'chip';
+      d.textContent = kw;
+      d.onclick = () => {
+        if(activeKW.has(kw)){ activeKW.delete(kw); d.classList.remove('on'); }
+        else { activeKW.add(kw); d.classList.add('on'); }
         render();
       };
-      container.appendChild(d);
+      el.appendChild(d);
     });
   });
 }
 
-function getFilters(){
-  return{
-    year:document.getElementById('filterYear').value,
-    month:document.getElementById('filterMonth').value,
-    journal:document.getElementById('filterJournal').value,
-    method:document.getElementById('filterMethod').value,
-    paradigm:document.getElementById('filterParadigm').value,
-    preprint:document.getElementById('filterPreprint').value,
-    priority:document.getElementById('filterPriority').value,
-    search:document.getElementById('filterSearch').value.toLowerCase().trim()
-  };
-}
-
-function filterPapers(){
-  const f=getFilters();
-  return allPapers.filter(p=>{
-    if(f.year&&String(p.year)!==f.year)return false;
-    if(f.month&&p.month!==f.month)return false;
-    if(f.journal&&p.journal!==f.journal)return false;
-    if(f.method&&p.method!==f.method)return false;
-    if(f.paradigm&&p.paradigm!==f.paradigm)return false;
-    if(f.preprint==='peer-reviewed'&&p.preprint)return false;
-    if(f.preprint==='preprint'&&!p.preprint)return false;
-    if(f.priority==='yes'&&!p.priority_author)return false;
-    if(activeKeywords.size>0&&![...activeKeywords].every(kw=>has(p,kw)))return false;
-    if(showFavOnly&&!favorites.has(p.id))return false;
-    if(f.search){const hay=[p.title,p.authors,p.journal,p.institution,(p.keywords||[]).join(' ')].join(' ').toLowerCase();if(!hay.includes(f.search))return false;}
+function filtered(){
+  const month = document.getElementById('filterMonth').value;
+  const journal = document.getElementById('filterJournal').value;
+  const q = document.getElementById('filterSearch').value.toLowerCase().trim();
+  return allPapers.filter(p => {
+    if(month && p.month !== month) return false;
+    if(journal && p.journal !== journal) return false;
+    if(pills.pp && !p.preprint) return false;
+    if(pills.pr && !p.priority_author) return false;
+    if(pills.fv && !favs.has(p.id)) return false;
+    if(activeKW.size > 0 && ![...activeKW].every(k => has(p,k))) return false;
+    if(q){
+      const hay = [p.title, p.authors, p.journal, p.institution, (p.keywords||[]).join(' ')].join(' ').toLowerCase();
+      if(!hay.includes(q)) return false;
+    }
     return true;
   });
 }
 
 function render(){
-  const papers=filterPapers();
-  updateStats(papers);
-  if(currentView==='table')renderTable(papers);
-  else renderCards(papers);
-  document.getElementById('no-results').style.display=papers.length===0?'block':'none';
-}
-
-function updateStats(papers){
-  document.getElementById('statTotal').textContent=papers.length;
-  document.getElementById('statEEG').textContent=papers.filter(p=>has(p,'EEG')).length;
-  document.getElementById('statFMRI').textContent=papers.filter(p=>has(p,'fMRI')).length;
-  document.getElementById('statPreprints').textContent=papers.filter(p=>p.preprint).length;
-  document.getElementById('statPriority').textContent=papers.filter(p=>p.priority_author).length;
-  document.getElementById('statFavs').textContent=favorites.size;
+  const papers = filtered();
+  // Stats
+  document.getElementById('sTotal').textContent = papers.length;
+  document.getElementById('sEEG').textContent = papers.filter(p=>has(p,'EEG')).length;
+  document.getElementById('sFMRI').textContent = papers.filter(p=>has(p,'fMRI')).length;
+  document.getElementById('sPP').textContent = papers.filter(p=>p.preprint).length;
+  document.getElementById('sPR').textContent = papers.filter(p=>p.priority_author).length;
+  document.getElementById('sFav').textContent = favs.size;
+  // Views
+  const empty = papers.length === 0;
+  document.getElementById('tableView').style.display = (view==='table' && !empty) ? 'block' : 'none';
+  document.getElementById('cardView').style.display  = (view==='card'  && !empty) ? 'block' : 'none';
+  document.getElementById('no-results').style.display = empty ? 'block' : 'none';
+  if(!empty){
+    if(view==='table') renderTable(papers);
+    else renderCards(papers);
+  }
 }
 
 function renderTable(papers){
-  if(dataTable){dataTable.destroy();}
-  const tbody=document.getElementById('tableBody');
-  tbody.innerHTML=papers.map((p,i)=>`<tr>
-    <td style="text-align:center"><span class="fav-star${favorites.has(p.id)?' active':''}" onclick="toggleFav('${p.id}');event.stopPropagation()">★</span></td>
-    <td>${i+1}</td>
-    <td><a href="${p.doi_url}" target="_blank" style="color:#2c5282;font-weight:500">${p.first_author_short} (${p.year})</a></td>
-    <td><em>${p.journal}</em></td><td>${p.year}</td><td>${p.month}</td>
-    ${KW_TABLE_ORDER.map(kw=>`<td style="text-align:center">${ck(has(p,kw))}</td>`).join('')}
-    <td>${p.preprint?`<span class="preprint-badge">${p.preprint}</span>`:''}</td>
-    <td>${p.priority_author?'<span class="priority-badge">&#128276;</span>':''}</td>
+  if(dt){ dt.destroy(); }
+  document.getElementById('tableBody').innerHTML = papers.map((p,i) => `<tr>
+    <td style="text-align:center"><span class="fav-star${favs.has(p.id)?' on':''}" onclick="toggleFav('${p.id}');event.stopPropagation()">★</span></td>
+    <td style="color:#cbd5e0;font-size:.78em">${i+1}</td>
+    <td>
+      <a class="ptitle" href="${p.doi_url}" target="_blank">${p.title}</a>
+      <div class="pmeta">${p.first_author_short}${p.institution ? ' · ' + p.institution : ''}</div>
+    </td>
+    <td><em style="font-size:.83em;color:#4a5568">${p.journal}</em></td>
+    <td style="white-space:nowrap;font-size:.8em;color:#a0aec0">${p.date}</td>
+    <td style="white-space:nowrap;font-size:.8em;color:#718096">${p.age_range||'—'}</td>
+    <td><div class="tag-cell">${(p.keywords||[]).map(k=>`<span class="tag ${tagCls(k)}">${k}</span>`).join('')}</div></td>
+    <td style="white-space:nowrap">
+      ${p.preprint ? `<span class="pp-badge">${p.preprint}</span>` : ''}
+      ${p.priority_author ? ' <span class="pr-badge">★ Priority</span>' : ''}
+    </td>
   </tr>`).join('');
-  dataTable=$('#paperTable').DataTable({pageLength:25,order:[],searching:false,info:false,paging:papers.length>25,lengthChange:false,columnDefs:[{orderable:false,targets:0}]});
+  dt = $('#paperTable').DataTable({
+    pageLength:25, order:[], searching:false, info:false,
+    paging: papers.length > 25, lengthChange:false,
+    columnDefs:[{orderable:false, targets:[0,6]}]
+  });
 }
 
-function tagClass(kw){return KW_GROUP_MAP[kw]||'analysis';}
-
 function renderCards(papers){
-  document.getElementById('cardContainer').innerHTML=papers.map(p=>`
+  document.getElementById('cardContainer').innerHTML = papers.map(p => `
   <div class="paper-card">
-    <span class="fav-star${favorites.has(p.id)?' active':''}" onclick="toggleFav('${p.id}')" style="float:right;margin-left:10px;font-size:1.4em" title="${favorites.has(p.id)?'Remove from saved':'Save paper'}">★</span>
-    <a class="paper-title-link" href="${p.doi_url}" target="_blank">${p.title}</a>
-    ${p.priority_author?' <span class="priority-badge">&#128276; Priority</span>':''}
-    <div class="paper-meta">&#128197; ${p.date} &nbsp; &#128218; <em>${p.journal}</em> ${p.preprint?`&nbsp;<span class="preprint-badge">${p.preprint}</span>`:''}</div>
-    <div class="paper-authors"><strong>Authors:</strong> ${p.authors}</div>
-    <div class="paper-info"><strong>Institution:</strong> ${p.institution||'[UNVERIFIED]'} &nbsp;|&nbsp; <strong>Method:</strong> ${p.method} &nbsp;|&nbsp; <strong>Paradigm:</strong> ${p.paradigm||'-'} &nbsp;|&nbsp; <strong>Age:</strong> ${p.age_range}</div>
-    <div class="paper-info"><strong>Stats:</strong> ${p.statistical_approach}</div>
-    <div class="tags">${(p.keywords||[]).map(k=>`<span class="tag ${tagClass(k)}">${k}</span>`).join('')}</div>
-    <details open><summary>Abstract</summary><div class="abstract-text">${p.abstract||'Not available'}</div></details>
-    ${p.key_figure?`<details><summary>Key Figure Description</summary><div class="figure-text">${p.key_figure}</div></details>`:''}
-    <div style="margin-top:8px"><a href="${p.doi_url}" target="_blank" style="font-size:.82em;color:#2c5282;text-decoration:none">&#128279; View paper &amp; figures at publisher &#8599;</a></div>
+    <span class="fav-star${favs.has(p.id)?' on':''}" onclick="toggleFav('${p.id}')" style="float:right;margin-left:8px;font-size:1.3em" title="Save">★</span>
+    <a class="card-title" href="${p.doi_url}" target="_blank">${p.title}</a>
+    ${p.priority_author ? ' <span class="pr-badge">★ Priority</span>' : ''}
+    <div class="card-meta">&#128197; ${p.date} &nbsp;&#128218; <em>${p.journal}</em>${p.preprint ? ` &nbsp;<span class="pp-badge">${p.preprint}</span>` : ''}</div>
+    <div class="card-authors"><strong>Authors:</strong> ${p.authors}</div>
+    <div class="card-info"><strong>Institution:</strong> ${p.institution||'—'} &nbsp;|&nbsp; <strong>Age:</strong> ${p.age_range||'—'} &nbsp;|&nbsp; <strong>Stats:</strong> ${p.statistical_approach||'—'}</div>
+    <div class="card-tags">${(p.keywords||[]).map(k=>`<span class="tag ${tagCls(k)}">${k}</span>`).join('')}</div>
+    <details open><summary>Abstract</summary><div class="abs-body">${p.abstract||'Not available'}</div></details>
+    ${p.key_figure ? `<details><summary>Key Figure</summary><div class="fig-body">${p.key_figure}</div></details>` : ''}
+    <a class="pub-link" href="${p.doi_url}" target="_blank">&#128279; View paper &amp; figures at publisher &#8599;</a>
   </div>`).join('');
 }
 
 function setView(v){
-  currentView=v;
-  document.getElementById('tableView').style.display=v==='table'?'block':'none';
-  document.getElementById('cardView').style.display=v==='card'?'block':'none';
-  document.getElementById('btnTable').classList.toggle('active',v==='table');
-  document.getElementById('btnCard').classList.toggle('active',v==='card');
+  view = v;
+  document.getElementById('vbTable').classList.toggle('on', v==='table');
+  document.getElementById('vbCard').classList.toggle('on', v==='card');
   render();
 }
 
 function resetFilters(){
-  ['filterYear','filterMonth','filterJournal','filterMethod','filterParadigm','filterPreprint','filterPriority']
-    .forEach(id=>document.getElementById(id).value='');
-  document.getElementById('filterSearch').value='';
-  activeKeywords.clear();
-  document.querySelectorAll('.keyword-chip').forEach(c=>c.classList.remove('active'));
-  showFavOnly=false;
-  document.getElementById('btnFavFilter').classList.remove('active');
+  document.getElementById('filterMonth').value = '';
+  document.getElementById('filterJournal').value = '';
+  document.getElementById('filterSearch').value = '';
+  activeKW.clear();
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('on'));
+  pills = {pp:false, pr:false, fv:false};
+  ['Pp','Pr','Fv'].forEach(n => document.getElementById('btn'+n).classList.remove('active'));
   render();
 }
 
-['filterYear','filterMonth','filterJournal','filterMethod','filterParadigm','filterPreprint','filterPriority']
-  .forEach(id=>document.getElementById(id).addEventListener('change',render));
-document.getElementById('filterSearch').addEventListener('input',render);
+document.getElementById('filterMonth').addEventListener('change', render);
+document.getElementById('filterJournal').addEventListener('change', render);
+document.getElementById('filterSearch').addEventListener('input', render);
 init();
 </script>
 </body>
