@@ -91,6 +91,9 @@ summary:hover{color:#1a365d}
 <div class="header">
   <h1>Developmental Cognitive Neuroscience Research Trends</h1>
   <p>EEG &middot; fMRI &middot; Autism &middot; Down Syndrome &middot; Trajectories &middot; Multivariate &middot; Early Adversity</p>
+  <p style="margin-top:10px;font-size:.85em;opacity:.9">
+    <a href="https://github.com/haerinchung-bch/neuro-research-trends/tree/main/reports" target="_blank" style="color:white;text-decoration:underline">&#128196; Download weekly reports (PDF &amp; Markdown)</a>
+  </p>
 </div>
 <div class="container">
   <div class="filters">
@@ -309,8 +312,9 @@ function renderCards(papers){
     <div class="paper-info"><strong>Institution:</strong> ${p.institution||'[UNVERIFIED]'} &nbsp;|&nbsp; <strong>Method:</strong> ${p.method} &nbsp;|&nbsp; <strong>Paradigm:</strong> ${p.paradigm||'-'} &nbsp;|&nbsp; <strong>Age:</strong> ${p.age_range}</div>
     <div class="paper-info"><strong>Stats:</strong> ${p.statistical_approach}</div>
     <div class="tags">${(p.keywords||[]).map(k=>`<span class="tag ${tagClass(k)}">${k}</span>`).join('')}</div>
-    <details><summary>Abstract</summary><div class="abstract-text">${p.abstract||'Not available'}</div></details>
-    ${p.key_figure?`<details><summary>Key Figure</summary><div class="figure-text">${p.key_figure}</div></details>`:''}
+    <details open><summary>Abstract</summary><div class="abstract-text">${p.abstract||'Not available'}</div></details>
+    ${p.key_figure?`<details><summary>Key Figure Description</summary><div class="figure-text">${p.key_figure}</div></details>`:''}
+    <div style="margin-top:8px"><a href="${p.doi_url}" target="_blank" style="font-size:.82em;color:#2c5282;text-decoration:none">&#128279; View paper &amp; figures at publisher &#8599;</a></div>
   </div>`).join('');
 }
 
