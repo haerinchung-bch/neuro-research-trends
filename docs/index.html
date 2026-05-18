@@ -48,6 +48,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ma
 .stat .label{font-size:.75em;color:#718096}
 .reset-btn{padding:8px 18px;background:#e2e8f0;border:none;border-radius:6px;cursor:pointer;font-size:.85em;color:#4a5568;font-weight:500}
 .reset-btn:hover{background:#cbd5e0}
+.fav-filter-btn{padding:8px 18px;border:1.5px solid #f6ad55;background:white;border-radius:6px;cursor:pointer;font-size:.85em;color:#c05621;font-weight:500}
+.fav-filter-btn:hover{background:#fffaf0}
+.fav-filter-btn.active{background:#c05621;color:white;border-color:#c05621}
+.fav-star{color:#cbd5e0;cursor:pointer;font-size:1.15em;user-select:none;transition:color .15s;line-height:1}
+.fav-star:hover{color:#f6e05e}
+.fav-star.active{color:#f6ad55}
 .section{background:white;border-radius:10px;padding:24px;margin-bottom:20px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
 #tableView table.dataTable{width:100%!important;font-size:.83em}
 #tableView table.dataTable th{background:#ebf8ff;color:#1a365d;white-space:nowrap}
@@ -125,7 +131,10 @@ summary:hover{color:#1a365d}
         <div class="keyword-chips" id="chips-analysis"></div>
       </div>
     </div>
-    <div style="margin-top:14px;"><button class="reset-btn" onclick="resetFilters()">Reset all filters</button></div>
+    <div style="margin-top:14px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <button class="reset-btn" onclick="resetFilters()">Reset all filters</button>
+      <button class="fav-filter-btn" id="btnFavFilter" onclick="toggleFavFilter()">★ Show favorites</button>
+    </div>
   </div>
   <div class="stats-bar">
     <div class="stat"><div class="num" id="statTotal">-</div><div class="label">Showing</div></div>
@@ -133,6 +142,7 @@ summary:hover{color:#1a365d}
     <div class="stat"><div class="num" id="statFMRI">-</div><div class="label">fMRI</div></div>
     <div class="stat"><div class="num" id="statPreprints">-</div><div class="label">Preprints</div></div>
     <div class="stat"><div class="num" id="statPriority">-</div><div class="label">Priority</div></div>
+    <div class="stat"><div class="num" id="statFavs" style="color:#c05621">-</div><div class="label">★ Saved</div></div>
   </div>
   <div class="view-toggle">
     <button class="view-btn active" id="btnTable" onclick="setView('table')">Table View</button>
@@ -141,7 +151,7 @@ summary:hover{color:#1a365d}
   <div class="section" id="tableView">
     <table id="paperTable" class="display" style="width:100%">
       <thead><tr>
-        <th>#</th><th>Paper</th><th>Journal</th><th>Year</th><th>Month</th>
+        <th title="Favorite">★</th><th>#</th><th>Paper</th><th>Journal</th><th>Year</th><th>Month</th>
         <th title="EEG">EEG</th><th title="fMRI">fMRI</th><th title="fNIRS">fNIRS</th><th title="Behavioral">Behav</th><th title="Eye-tracking">Eye</th>
         <th title="0-12 months">0-12m</th><th title="12-36 months">12-36m</th><th title="3-5 years">3-5yr</th>
         <th title="Autism">ASD</th><th title="Down Syndrome">DS</th><th title="Early Adversity">EA</th><th title="Typical Dev">TD</th>
@@ -171,6 +181,19 @@ const KW_GROUP_MAP = {};
 KW_GROUPS.forEach(g=>g.keywords.forEach(k=>KW_GROUP_MAP[k]=g.id));
 
 let allPapers=[],activeKeywords=new Set(),dataTable=null,currentView='table';
+let favorites=new Set(JSON.parse(localStorage.getItem('nrt_favs')||'[]'));
+let showFavOnly=false;
+
+function toggleFav(id){
+  if(favorites.has(id)){favorites.delete(id);}else{favorites.add(id);}
+  localStorage.setItem('nrt_favs',JSON.stringify([...favorites]));
+  render();
+}
+function toggleFavFilter(){
+  showFavOnly=!showFavOnly;
+  document.getElementById('btnFavFilter').classList.toggle('active',showFavOnly);
+  render();
+}
 function ck(v){return v?'<span class="check">&#10004;</span>':''}
 function has(p,kw){return(p.keywords||[]).includes(kw)}
 
@@ -235,6 +258,7 @@ function filterPapers(){
     if(f.preprint==='preprint'&&!p.preprint)return false;
     if(f.priority==='yes'&&!p.priority_author)return false;
     if(activeKeywords.size>0&&![...activeKeywords].every(kw=>has(p,kw)))return false;
+    if(showFavOnly&&!favorites.has(p.id))return false;
     if(f.search){const hay=[p.title,p.authors,p.journal,p.institution,(p.keywords||[]).join(' ')].join(' ').toLowerCase();if(!hay.includes(f.search))return false;}
     return true;
   });
@@ -254,12 +278,14 @@ function updateStats(papers){
   document.getElementById('statFMRI').textContent=papers.filter(p=>has(p,'fMRI')).length;
   document.getElementById('statPreprints').textContent=papers.filter(p=>p.preprint).length;
   document.getElementById('statPriority').textContent=papers.filter(p=>p.priority_author).length;
+  document.getElementById('statFavs').textContent=favorites.size;
 }
 
 function renderTable(papers){
   if(dataTable){dataTable.destroy();}
   const tbody=document.getElementById('tableBody');
   tbody.innerHTML=papers.map((p,i)=>`<tr>
+    <td style="text-align:center"><span class="fav-star${favorites.has(p.id)?' active':''}" onclick="toggleFav('${p.id}');event.stopPropagation()">★</span></td>
     <td>${i+1}</td>
     <td><a href="${p.doi_url}" target="_blank" style="color:#2c5282;font-weight:500">${p.first_author_short} (${p.year})</a></td>
     <td><em>${p.journal}</em></td><td>${p.year}</td><td>${p.month}</td>
@@ -267,7 +293,7 @@ function renderTable(papers){
     <td>${p.preprint?`<span class="preprint-badge">${p.preprint}</span>`:''}</td>
     <td>${p.priority_author?'<span class="priority-badge">&#128276;</span>':''}</td>
   </tr>`).join('');
-  dataTable=$('#paperTable').DataTable({pageLength:25,order:[],searching:false,info:false,paging:papers.length>25,lengthChange:false});
+  dataTable=$('#paperTable').DataTable({pageLength:25,order:[],searching:false,info:false,paging:papers.length>25,lengthChange:false,columnDefs:[{orderable:false,targets:0}]});
 }
 
 function tagClass(kw){return KW_GROUP_MAP[kw]||'analysis';}
@@ -275,6 +301,7 @@ function tagClass(kw){return KW_GROUP_MAP[kw]||'analysis';}
 function renderCards(papers){
   document.getElementById('cardContainer').innerHTML=papers.map(p=>`
   <div class="paper-card">
+    <span class="fav-star${favorites.has(p.id)?' active':''}" onclick="toggleFav('${p.id}')" style="float:right;margin-left:10px;font-size:1.4em" title="${favorites.has(p.id)?'Remove from saved':'Save paper'}">★</span>
     <a class="paper-title-link" href="${p.doi_url}" target="_blank">${p.title}</a>
     ${p.priority_author?' <span class="priority-badge">&#128276; Priority</span>':''}
     <div class="paper-meta">&#128197; ${p.date} &nbsp; &#128218; <em>${p.journal}</em> ${p.preprint?`&nbsp;<span class="preprint-badge">${p.preprint}</span>`:''}</div>
@@ -302,6 +329,8 @@ function resetFilters(){
   document.getElementById('filterSearch').value='';
   activeKeywords.clear();
   document.querySelectorAll('.keyword-chip').forEach(c=>c.classList.remove('active'));
+  showFavOnly=false;
+  document.getElementById('btnFavFilter').classList.remove('active');
   render();
 }
 
