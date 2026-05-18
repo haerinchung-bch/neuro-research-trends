@@ -145,7 +145,7 @@ summary:hover{color:#1a365d}
         <th title="EEG">EEG</th><th title="fMRI">fMRI</th><th title="fNIRS">fNIRS</th><th title="Behavioral">Behav</th><th title="Eye-tracking">Eye</th>
         <th title="0-12 months">0-12m</th><th title="12-36 months">12-36m</th><th title="3-5 years">3-5yr</th>
         <th title="Autism">ASD</th><th title="Down Syndrome">DS</th><th title="Early Adversity">EA</th><th title="Typical Dev">TD</th>
-        <th title="RS-Oscillatory">RS-Osc</th><th title="RS-fMRI">RS-fMRI</th><th title="ERP">ERP</th><th title="Power">Power</th><th title="Connectivity">Conn</th><th title="Trajectory">Traj</th><th title="Multivariate">Multi</th>
+        <th title="RS-Oscillatory">RS-Osc</th><th title="RS-fMRI">RS-fMRI</th><th title="ERP">ERP</th><th title="Power">Power</th><th title="Connectivity">Conn</th><th title="Trajectory">Traj</th><th title="Predictive">Pred</th><th title="Concurrent">Conc</th><th title="Multivariate">Multi</th>
         <th>Preprint</th><th>Priority</th>
       </tr></thead>
       <tbody id="tableBody"></tbody>
@@ -162,11 +162,11 @@ const KW_GROUPS = [
   {id:'age',      label:'Age',             keywords:['0-12mo','12-36mo','3-5yr']},
   {id:'diagnosis',label:'Diagnosis / Group', keywords:['Autism','Down Syndrome','Early Adversity','Typical Dev']},
   {id:'paradigm', label:'Paradigm / Task', keywords:['RS-Oscillatory','RS-fMRI','ERP']},
-  {id:'feature',  label:'Feature',         keywords:['Power','Connectivity','Coherence','Structural','Phase-Amplitude Coupling']},
-  {id:'analysis', label:'Analysis / Model',keywords:['Trajectory','Multivariate']}
+  {id:'feature',  label:'Feature',         keywords:['Power','Connectivity','Coherence','Phase-Amplitude Coupling']},
+  {id:'analysis', label:'Analysis / Model',keywords:['Trajectory','Predictive','Concurrent','Multivariate']}
 ];
 const ALL_KEYWORDS = KW_GROUPS.flatMap(g=>g.keywords);
-const KW_TABLE_ORDER = ['EEG','fMRI','fNIRS','Behavioral','Eye-tracking','0-12mo','12-36mo','3-5yr','Autism','Down Syndrome','Early Adversity','Typical Dev','RS-Oscillatory','RS-fMRI','ERP','Power','Connectivity','Trajectory','Multivariate'];
+const KW_TABLE_ORDER = ['EEG','fMRI','fNIRS','Behavioral','Eye-tracking','0-12mo','12-36mo','3-5yr','Autism','Down Syndrome','Early Adversity','Typical Dev','RS-Oscillatory','RS-fMRI','ERP','Power','Connectivity','Trajectory','Predictive','Concurrent','Multivariate'];
 const KW_GROUP_MAP = {};
 KW_GROUPS.forEach(g=>g.keywords.forEach(k=>KW_GROUP_MAP[k]=g.id));
 
