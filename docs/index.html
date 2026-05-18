@@ -33,6 +33,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ma
 .kw-group.diagnosis .keyword-chip{border-color:#e9d8fd;color:#553c9a}
 .kw-group.diagnosis .keyword-chip:hover{background:#faf5ff}
 .kw-group.diagnosis .keyword-chip.active{background:#553c9a;border-color:#553c9a;color:white}
+.kw-group.paradigm .keyword-chip{border-color:#b2f5ea;color:#234e52}
+.kw-group.paradigm .keyword-chip:hover{background:#e6fffa}
+.kw-group.paradigm .keyword-chip.active{background:#234e52;border-color:#234e52;color:white}
 .kw-group.analysis .keyword-chip{border-color:#bee3f8;color:#2c5282}
 .kw-group.analysis .keyword-chip:hover{background:#ebf8ff}
 .kw-group.analysis .keyword-chip.active{background:#2c5282;border-color:#2c5282;color:white}
@@ -60,6 +63,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ma
 .tag.modality{background:#f0fff4;color:#276749}
 .tag.age{background:#fffaf0;color:#9c4221}
 .tag.diagnosis{background:#faf5ff;color:#553c9a}
+.tag.paradigm{background:#e6fffa;color:#234e52}
 .tag.analysis{background:#e8f4fd;color:#1a6b9a}
 details{margin-top:8px}
 summary{cursor:pointer;color:#2c5282;font-size:.85em;font-weight:500;padding:4px 0}
@@ -104,6 +108,10 @@ summary:hover{color:#1a365d}
         <div class="kw-group-label">Diagnosis / Group</div>
         <div class="keyword-chips" id="chips-diagnosis"></div>
       </div>
+      <div class="kw-group paradigm">
+        <div class="kw-group-label">Paradigm / Task</div>
+        <div class="keyword-chips" id="chips-paradigm"></div>
+      </div>
       <div class="kw-group analysis">
         <div class="kw-group-label">Analysis / Model</div>
         <div class="keyword-chips" id="chips-analysis"></div>
@@ -142,10 +150,11 @@ summary:hover{color:#1a365d}
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script>
 const KW_GROUPS = [
-  {id:'modality', label:'Modality', keywords:['EEG','fMRI','fNIRS','Behavioral','Eye-tracking']},
-  {id:'age',      label:'Age',      keywords:['0-12mo','12-36mo','3-5yr']},
+  {id:'modality', label:'Modality',        keywords:['EEG','fMRI','fNIRS','Behavioral','Eye-tracking']},
+  {id:'age',      label:'Age',             keywords:['0-12mo','12-36mo','3-5yr']},
   {id:'diagnosis',label:'Diagnosis / Group', keywords:['Autism','Down Syndrome','Early Adversity','Typical Dev']},
-  {id:'analysis', label:'Analysis / Model',  keywords:['RS-Oscillatory','RS-fMRI','ERP','Connectivity','Trajectory','Multivariate']}
+  {id:'paradigm', label:'Paradigm / Task', keywords:['RS-Oscillatory','RS-fMRI','ERP']},
+  {id:'analysis', label:'Analysis / Model',keywords:['Connectivity','Trajectory','Multivariate']}
 ];
 const ALL_KEYWORDS = KW_GROUPS.flatMap(g=>g.keywords);
 const KW_TABLE_ORDER = ['EEG','fMRI','fNIRS','Behavioral','Eye-tracking','0-12mo','12-36mo','3-5yr','Autism','Down Syndrome','Early Adversity','Typical Dev','RS-Oscillatory','RS-fMRI','ERP','Connectivity','Trajectory','Multivariate'];
@@ -249,7 +258,7 @@ function renderTable(papers){
     <td>${p.preprint?`<span class="preprint-badge">${p.preprint}</span>`:''}</td>
     <td>${p.priority_author?'<span class="priority-badge">&#128276;</span>':''}</td>
   </tr>`).join('');
-  dataTable=$('#paperTable').DataTable({pageLength:25,order:[],searching:false,info:false,paging:papers.length>25});
+  dataTable=$('#paperTable').DataTable({pageLength:25,order:[],searching:false,info:false,paging:papers.length>25,lengthChange:false});
 }
 
 function tagClass(kw){return KW_GROUP_MAP[kw]||'analysis';}
