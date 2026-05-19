@@ -78,6 +78,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ma
 .stat-lbl{font-size:.73em;color:#a0aec0}
 .stat-dot{color:#cbd5e0;margin:0 2px}
 .stat-num.fav{color:#c05621}
+.stat-num.rev{color:#553c9a}
 .view-tog{display:flex;gap:5px}
 .vbtn{padding:5px 14px;border:1.5px solid #e2e8f0;background:white;border-radius:6px;cursor:pointer;font-size:.8em;color:#4a5568;font-weight:700;transition:all .15s}
 .vbtn.on{background:#1a365d;color:white;border-color:#1a365d}
@@ -100,6 +101,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ma
 .tag.analysis{background:#e8f4fd;color:#1a6b9a}
 .pp-badge{background:#fef3c7;color:#92400e;padding:1px 6px;border-radius:9px;font-size:.7em;font-weight:700;white-space:nowrap}
 .pr-badge{background:#fce7f3;color:#9d174d;padding:1px 6px;border-radius:9px;font-size:.7em;font-weight:700}
+.type-badge{padding:1px 6px;border-radius:9px;font-size:.7em;font-weight:700;white-space:nowrap}
+.type-badge.Empirical{background:#e8f4fd;color:#1a6b9a}
+.type-badge.Review{background:#f0fff4;color:#276749}
+.type-badge.Perspective{background:#faf5ff;color:#553c9a}
+.type-badge.Tutorial{background:#e6fffa;color:#234e52}
+.type-badge.Meta-analysis{background:#fffaf0;color:#9c4221}
+.type-badge.Commentary{background:#fff1f2;color:#9f1239}
 .fav-star{color:#e2e8f0;cursor:pointer;font-size:1.05em;user-select:none;transition:color .15s}
 .fav-star:hover{color:#f6e05e}
 .fav-star.on{color:#f6ad55}
@@ -160,6 +168,18 @@ summary:hover{color:#2c5282}
         <select id="filterJournal"><option value="">All journals</option></select>
       </div>
       <div class="fg">
+        <label>Paper Type</label>
+        <select id="filterType">
+          <option value="">All types</option>
+          <option value="Empirical">Empirical</option>
+          <option value="Review">Review</option>
+          <option value="Perspective">Perspective</option>
+          <option value="Tutorial">Tutorial</option>
+          <option value="Meta-analysis">Meta-analysis</option>
+          <option value="Commentary">Commentary</option>
+        </select>
+      </div>
+      <div class="fg">
         <label>Show only</label>
         <div class="pill-row">
           <button class="pill pp" id="btnPp" onclick="togglePill('pp')">Preprints</button>
@@ -216,6 +236,8 @@ summary:hover{color:#2c5282}
       <span class="stat-num" id="sEEG">—</span><span class="stat-lbl">EEG</span>
       <span class="stat-dot">·</span>
       <span class="stat-num" id="sFMRI">—</span><span class="stat-lbl">fMRI</span>
+      <span class="stat-dot">·</span>
+      <span class="stat-num rev" id="sRev">—</span><span class="stat-lbl">reviews/perspectives</span>
       <span class="stat-dot">·</span>
       <span class="stat-num" id="sPP">—</span><span class="stat-lbl">preprints</span>
       <span class="stat-dot">·</span>
@@ -274,6 +296,11 @@ let pills = {pp: false, pr: false, fv: false};
 
 function tagCls(k){ return KW_GROUP_MAP[k] || 'analysis'; }
 function has(p,k){ return (p.keywords||[]).includes(k); }
+function typeBadge(type){
+  if(!type) return '';
+  const safe = type.replace(/[^A-Za-z-]/g,'');
+  return `<span class="type-badge ${safe}">${type}</span>`;
+}
 
 function toggleFav(id){
   favs.has(id) ? favs.delete(id) : favs.add(id);
@@ -296,7 +323,6 @@ async function init(){
   allPapers.sort((a,b) => b.date.localeCompare(a.date));
   populateSelects();
   buildChips();
-  // Default to latest month in data
   const latest = allPapers[0]?.month;
   if(latest) document.getElementById('filterMonth').value = latest;
   render();
@@ -331,16 +357,18 @@ function buildChips(){
 function filtered(){
   const month = document.getElementById('filterMonth').value;
   const journal = document.getElementById('filterJournal').value;
+  const type = document.getElementById('filterType').value;
   const q = document.getElementById('filterSearch').value.toLowerCase().trim();
   return allPapers.filter(p => {
     if(month && p.month !== month) return false;
     if(journal && p.journal !== journal) return false;
+    if(type && (p.paper_type || '') !== type) return false;
     if(pills.pp && !p.preprint) return false;
     if(pills.pr && !p.priority_author) return false;
     if(pills.fv && !favs.has(p.id)) return false;
     if(activeKW.size > 0 && ![...activeKW].every(k => has(p,k))) return false;
     if(q){
-      const hay = [p.title, p.authors, p.journal, p.institution, (p.keywords||[]).join(' ')].join(' ').toLowerCase();
+      const hay = [p.title, p.authors, p.journal, p.institution, (p.keywords||[]).join(' '), p.paper_type||''].join(' ').toLowerCase();
       if(!hay.includes(q)) return false;
     }
     return true;
@@ -349,14 +377,13 @@ function filtered(){
 
 function render(){
   const papers = filtered();
-  // Stats
   document.getElementById('sTotal').textContent = papers.length;
   document.getElementById('sEEG').textContent = papers.filter(p=>has(p,'EEG')).length;
   document.getElementById('sFMRI').textContent = papers.filter(p=>has(p,'fMRI')).length;
+  document.getElementById('sRev').textContent = papers.filter(p=>p.paper_type==='Review'||p.paper_type==='Perspective').length;
   document.getElementById('sPP').textContent = papers.filter(p=>p.preprint).length;
   document.getElementById('sPR').textContent = papers.filter(p=>p.priority_author).length;
   document.getElementById('sFav').textContent = favs.size;
-  // Views
   const empty = papers.length === 0;
   document.getElementById('tableView').style.display = (view==='table' && !empty) ? 'block' : 'none';
   document.getElementById('cardView').style.display  = (view==='card'  && !empty) ? 'block' : 'none';
@@ -381,7 +408,8 @@ function renderTable(papers){
     <td style="white-space:nowrap;font-size:.8em;color:#718096">${p.age_range||'—'}</td>
     <td><div class="tag-cell">${(p.keywords||[]).map(k=>`<span class="tag ${tagCls(k)}">${k}</span>`).join('')}</div></td>
     <td style="white-space:nowrap">
-      ${p.preprint ? `<span class="pp-badge">${p.preprint}</span>` : ''}
+      ${p.paper_type ? typeBadge(p.paper_type) : ''}
+      ${p.preprint ? ` <span class="pp-badge">${p.preprint}</span>` : ''}
       ${p.priority_author ? ' <span class="pr-badge">★ Priority</span>' : ''}
     </td>
   </tr>`).join('');
@@ -398,7 +426,7 @@ function renderCards(papers){
     <span class="fav-star${favs.has(p.id)?' on':''}" onclick="toggleFav('${p.id}')" style="float:right;margin-left:8px;font-size:1.3em" title="Save">★</span>
     <a class="card-title" href="${p.doi_url}" target="_blank">${p.title}</a>
     ${p.priority_author ? ' <span class="pr-badge">★ Priority</span>' : ''}
-    <div class="card-meta">&#128197; ${p.date} &nbsp;&#128218; <em>${p.journal}</em>${p.preprint ? ` &nbsp;<span class="pp-badge">${p.preprint}</span>` : ''}</div>
+    <div class="card-meta">&#128197; ${p.date} &nbsp;&#128218; <em>${p.journal}</em>${p.preprint ? ` &nbsp;<span class="pp-badge">${p.preprint}</span>` : ''}${p.paper_type ? ` &nbsp;${typeBadge(p.paper_type)}` : ''}</div>
     <div class="card-authors"><strong>Authors:</strong> ${p.authors}</div>
     <div class="card-info"><strong>Institution:</strong> ${p.institution||'—'} &nbsp;|&nbsp; <strong>Age:</strong> ${p.age_range||'—'} &nbsp;|&nbsp; <strong>Stats:</strong> ${p.statistical_approach||'—'}</div>
     <div class="card-tags">${(p.keywords||[]).map(k=>`<span class="tag ${tagCls(k)}">${k}</span>`).join('')}</div>
@@ -419,6 +447,7 @@ function resetFilters(){
   document.getElementById('filterMonth').value = '';
   document.getElementById('filterJournal').value = '';
   document.getElementById('filterSearch').value = '';
+  document.getElementById('filterType').value = '';
   activeKW.clear();
   document.querySelectorAll('.chip').forEach(c => c.classList.remove('on'));
   pills = {pp:false, pr:false, fv:false};
@@ -428,6 +457,7 @@ function resetFilters(){
 
 document.getElementById('filterMonth').addEventListener('change', render);
 document.getElementById('filterJournal').addEventListener('change', render);
+document.getElementById('filterType').addEventListener('change', render);
 document.getElementById('filterSearch').addEventListener('input', render);
 init();
 </script>
