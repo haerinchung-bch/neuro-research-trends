@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Neuro Research Trends</title>
+<title>Neuro Research Trends — Developmental Cognitive Neuroscience</title>
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 <style>
 *{box-sizing:border-box}
@@ -36,7 +36,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ma
 .reset-btn{height:32px;padding:0 13px;background:#f0f4f8;border:none;border-radius:6px;cursor:pointer;font-size:.78em;font-weight:700;color:#718096;transition:background .15s;align-self:flex-end;white-space:nowrap}
 .reset-btn:hover{background:#e2e8f0}
 
-/* Advanced filters */
+/* Advanced / keyword chips */
 .adv-section{margin-top:10px;padding-top:10px;border-top:1px solid #f0f4f8}
 .adv-btn{background:none;border:none;color:#a0aec0;font-size:.72em;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:4px;padding:0;text-transform:uppercase;letter-spacing:.06em;transition:color .15s}
 .adv-btn:hover{color:#4a5568}
@@ -45,8 +45,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ma
 .adv-body{display:none;margin-top:10px}
 .adv-body.open{display:block}
 .chip-rows{display:flex;flex-direction:column;gap:8px}
-.chip-row{display:flex;flex-wrap:wrap;gap:12px}
-.chip-group{min-width:150px}
+.chip-row{display:flex;flex-wrap:wrap;gap:14px}
+.chip-group{min-width:140px}
 .cg-label{font-size:.67em;font-weight:700;color:#cbd5e0;text-transform:uppercase;letter-spacing:.08em;margin-bottom:5px}
 .chips{display:flex;flex-wrap:wrap;gap:4px}
 .chip{padding:3px 9px;border-radius:14px;border:1.5px solid #e2e8f0;background:white;color:#4a5568;font-size:.74em;font-weight:600;cursor:pointer;transition:all .15s;user-select:none}
@@ -61,12 +61,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ma
 .cg.dx .chip{border-color:#e9d8fd;color:#553c9a}
 .cg.dx .chip:hover{background:#faf5ff}
 .cg.dx .chip.on{background:#553c9a;border-color:#553c9a;color:white}
-.cg.par .chip{border-color:#b2f5ea;color:#234e52}
-.cg.par .chip:hover{background:#e6fffa}
-.cg.par .chip.on{background:#234e52;border-color:#234e52;color:white}
-.cg.feat .chip{border-color:#fecaca;color:#991b1b}
-.cg.feat .chip:hover{background:#fff1f2}
-.cg.feat .chip.on{background:#991b1b;border-color:#991b1b;color:white}
 .cg.ana .chip{border-color:#bee3f8;color:#2c5282}
 .cg.ana .chip:hover{background:#ebf8ff}
 .cg.ana .chip.on{background:#2c5282;border-color:#2c5282;color:white}
@@ -93,12 +87,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;ma
 .pmeta{font-size:.74em;color:#a0aec0;margin-top:2px;line-height:1.4}
 .tag-cell{display:flex;flex-wrap:wrap;gap:3px;max-width:260px}
 .tag{padding:1px 6px;border-radius:9px;font-size:.7em;font-weight:600;white-space:nowrap}
-.tag.modality{background:#f0fff4;color:#276749}
+.tag.mod{background:#f0fff4;color:#276749}
 .tag.age{background:#fffaf0;color:#9c4221}
-.tag.diagnosis{background:#faf5ff;color:#553c9a}
-.tag.paradigm{background:#e6fffa;color:#234e52}
-.tag.feature{background:#fff1f2;color:#9f1239}
-.tag.analysis{background:#e8f4fd;color:#1a6b9a}
+.tag.dx{background:#faf5ff;color:#553c9a}
+.tag.ana{background:#e8f4fd;color:#1a6b9a}
 .pp-badge{background:#fef3c7;color:#92400e;padding:1px 6px;border-radius:9px;font-size:.7em;font-weight:700;white-space:nowrap}
 .pr-badge{background:#fce7f3;color:#9d174d;padding:1px 6px;border-radius:9px;font-size:.7em;font-weight:700}
 .type-badge{padding:1px 6px;border-radius:9px;font-size:.7em;font-weight:700;white-space:nowrap}
@@ -160,12 +152,29 @@ summary:hover{color:#2c5282}
         <input type="text" id="filterSearch" placeholder="Title, author, keyword…">
       </div>
       <div class="fg">
+        <label>Year</label>
+        <select id="filterYear"><option value="">All years</option></select>
+      </div>
+      <div class="fg">
         <label>Month</label>
         <select id="filterMonth"><option value="">All months</option></select>
       </div>
       <div class="fg">
         <label>Journal</label>
         <select id="filterJournal"><option value="">All journals</option></select>
+      </div>
+      <div class="fg">
+        <label>Method</label>
+        <select id="filterMethod">
+          <option value="">All methods</option>
+          <option value="EEG">EEG</option>
+          <option value="fMRI">fMRI</option>
+          <option value="fNIRS">fNIRS</option>
+          <option value="Behavioral">Behavioral</option>
+          <option value="Eye-tracking">Eye-tracking</option>
+          <option value="Mixed">Mixed</option>
+          <option value="N/A">N/A</option>
+        </select>
       </div>
       <div class="fg">
         <label>Paper Type</label>
@@ -183,7 +192,7 @@ summary:hover{color:#2c5282}
         <label>Show only</label>
         <div class="pill-row">
           <button class="pill pp" id="btnPp" onclick="togglePill('pp')">Preprints</button>
-          <button class="pill pr" id="btnPr" onclick="togglePill('pr')">★ Priority</button>
+          <button class="pill pr" id="btnPr" onclick="togglePill('pr')">&#9733; Priority</button>
           <button class="pill fv" id="btnFv" onclick="togglePill('fv')">&#9825; Saved</button>
         </div>
       </div>
@@ -192,7 +201,7 @@ summary:hover{color:#2c5282}
 
     <div class="adv-section">
       <button class="adv-btn" id="advBtn" onclick="toggleAdv()">
-        <span class="arr">&#9654;</span> Advanced filters
+        <span class="arr">&#9654;</span> Keyword filters
       </button>
       <div class="adv-body" id="advBody">
         <div class="chip-rows">
@@ -202,25 +211,15 @@ summary:hover{color:#2c5282}
               <div class="chips" id="cg-modality"></div>
             </div>
             <div class="chip-group cg age">
-              <div class="cg-label">Age range</div>
+              <div class="cg-label">Age Range</div>
               <div class="chips" id="cg-age"></div>
             </div>
             <div class="chip-group cg dx">
-              <div class="cg-label">Group</div>
+              <div class="cg-label">Group / Diagnosis</div>
               <div class="chips" id="cg-diagnosis"></div>
             </div>
-          </div>
-          <div class="chip-row">
-            <div class="chip-group cg par">
-              <div class="cg-label">Paradigm</div>
-              <div class="chips" id="cg-paradigm"></div>
-            </div>
-            <div class="chip-group cg feat">
-              <div class="cg-label">Signal feature</div>
-              <div class="chips" id="cg-feature"></div>
-            </div>
             <div class="chip-group cg ana">
-              <div class="cg-label">Analysis type</div>
+              <div class="cg-label">Analysis / Model</div>
               <div class="chips" id="cg-analysis"></div>
             </div>
           </div>
@@ -254,7 +253,7 @@ summary:hover{color:#2c5282}
   <div class="tbl-wrap" id="tableView">
     <table id="paperTable" class="display" style="width:100%">
       <thead><tr>
-        <th style="width:28px">★</th>
+        <th style="width:28px">&#9733;</th>
         <th style="width:30px">#</th>
         <th>Paper</th>
         <th>Journal</th>
@@ -283,24 +282,23 @@ const KW_GROUPS = [
   {id:'modality',  cls:'mod', keywords:['EEG','fMRI','fNIRS','Behavioral','Eye-tracking']},
   {id:'age',       cls:'age', keywords:['0-12mo','12-36mo','3-5yr']},
   {id:'diagnosis', cls:'dx',  keywords:['Autism','Down Syndrome','Early Adversity','Typical Dev']},
-  {id:'paradigm',  cls:'par', keywords:['RS-Oscillatory','RS-fMRI','ERP']},
-  {id:'feature',   cls:'feat',keywords:['Power','Connectivity','Coherence','Phase-Amplitude Coupling']},
-  {id:'analysis',  cls:'ana', keywords:['Trajectory','Predictive','Concurrent','Multivariate']}
+  {id:'analysis',  cls:'ana', keywords:['RS-Oscillatory','RS-fMRI','ERP','Connectivity','Trajectory','Multivariate']}
 ];
 const KW_GROUP_MAP = {};
-KW_GROUPS.forEach(g => g.keywords.forEach(k => KW_GROUP_MAP[k] = g.id));
+KW_GROUPS.forEach(g => g.keywords.forEach(k => KW_GROUP_MAP[k] = g.cls));
 
 let allPapers = [], activeKW = new Set(), dt = null, view = 'table';
 let favs = new Set(JSON.parse(localStorage.getItem('nrt_favs') || '[]'));
 let pills = {pp: false, pr: false, fv: false};
 
-function tagCls(k){ return KW_GROUP_MAP[k] || 'analysis'; }
+function tagCls(k){ return KW_GROUP_MAP[k] || 'ana'; }
 function has(p,k){ return (p.keywords||[]).includes(k); }
 function typeBadge(type){
   if(!type) return '';
   const safe = type.replace(/[^A-Za-z-]/g,'');
   return `<span class="type-badge ${safe}">${type}</span>`;
 }
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 function toggleFav(id){
   favs.has(id) ? favs.delete(id) : favs.add(id);
@@ -309,7 +307,8 @@ function toggleFav(id){
 }
 function togglePill(name){
   pills[name] = !pills[name];
-  document.getElementById('btn'+name.charAt(0).toUpperCase()+name.slice(1)).classList.toggle('active', pills[name]);
+  const key = 'btn' + name.charAt(0).toUpperCase() + name.slice(1);
+  document.getElementById(key).classList.toggle('active', pills[name]);
   render();
 }
 function toggleAdv(){
@@ -320,12 +319,12 @@ function toggleAdv(){
 async function init(){
   const res = await fetch('data/papers.json?v=' + Date.now());
   allPapers = await res.json();
-  allPapers.sort((a,b) => b.date.localeCompare(a.date));
+  allPapers.sort((a,b) => (b.date||'').localeCompare(a.date||''));
   populateSelects();
   buildChips();
   const today = new Date();
   const curMonth = today.getFullYear() + '-' + String(today.getMonth()+1).padStart(2,'0');
-  const availMonths = [...new Set(allPapers.map(p=>p.month))].filter(m=>m<=curMonth).sort((a,b)=>b.localeCompare(a));
+  const availMonths = [...new Set(allPapers.map(p=>p.month||''))].filter(m=>m&&m<=curMonth).sort((a,b)=>b.localeCompare(a));
   const defaultMonth = availMonths[0] || '';
   if(defaultMonth) document.getElementById('filterMonth').value = defaultMonth;
   render();
@@ -336,13 +335,15 @@ function populateSelects(){
     const s = document.getElementById(id);
     items.forEach(v => { const o = document.createElement('option'); o.value = v; o.textContent = v; s.appendChild(o); });
   };
-  fill('filterMonth', [...new Set(allPapers.map(p => p.month))].sort((a,b) => b.localeCompare(a)));
-  fill('filterJournal', [...new Set(allPapers.map(p => p.journal))].sort());
+  fill('filterYear', [...new Set(allPapers.map(p => String(p.year||'')))].filter(Boolean).sort((a,b)=>b.localeCompare(a)));
+  fill('filterMonth', [...new Set(allPapers.map(p => p.month||''))].filter(Boolean).sort((a,b)=>b.localeCompare(a)));
+  fill('filterJournal', [...new Set(allPapers.map(p => p.journal||''))].filter(Boolean).sort());
 }
 
 function buildChips(){
   KW_GROUPS.forEach(g => {
     const el = document.getElementById('cg-' + g.id);
+    if(!el) return;
     g.keywords.forEach(kw => {
       const d = document.createElement('span');
       d.className = 'chip';
@@ -358,20 +359,24 @@ function buildChips(){
 }
 
 function filtered(){
-  const month = document.getElementById('filterMonth').value;
+  const year    = document.getElementById('filterYear').value;
+  const month   = document.getElementById('filterMonth').value;
   const journal = document.getElementById('filterJournal').value;
-  const type = document.getElementById('filterType').value;
-  const q = document.getElementById('filterSearch').value.toLowerCase().trim();
+  const method  = document.getElementById('filterMethod').value;
+  const type    = document.getElementById('filterType').value;
+  const q       = document.getElementById('filterSearch').value.toLowerCase().trim();
   return allPapers.filter(p => {
-    if(month && p.month !== month) return false;
-    if(journal && p.journal !== journal) return false;
-    if(type && (p.paper_type || '') !== type) return false;
+    if(year    && String(p.year||'') !== year) return false;
+    if(month   && (p.month||'') !== month) return false;
+    if(journal && (p.journal||'') !== journal) return false;
+    if(method  && (p.method||'') !== method) return false;
+    if(type    && (p.paper_type||'') !== type) return false;
     if(pills.pp && !p.preprint) return false;
     if(pills.pr && !p.priority_author) return false;
     if(pills.fv && !favs.has(p.id)) return false;
     if(activeKW.size > 0 && ![...activeKW].every(k => has(p,k))) return false;
     if(q){
-      const hay = [p.title, p.authors, p.journal, p.institution, (p.keywords||[]).join(' '), p.paper_type||''].join(' ').toLowerCase();
+      const hay = [p.title, p.authors, p.journal, p.institution, (p.keywords||[]).join(' '), p.paper_type||'', p.abstract||''].join(' ').toLowerCase();
       if(!hay.includes(q)) return false;
     }
     return true;
@@ -381,15 +386,15 @@ function filtered(){
 function render(){
   const papers = filtered();
   document.getElementById('sTotal').textContent = papers.length;
-  document.getElementById('sEEG').textContent = papers.filter(p=>has(p,'EEG')).length;
-  document.getElementById('sFMRI').textContent = papers.filter(p=>has(p,'fMRI')).length;
-  document.getElementById('sRev').textContent = papers.filter(p=>p.paper_type==='Review'||p.paper_type==='Perspective').length;
-  document.getElementById('sPP').textContent = papers.filter(p=>p.preprint).length;
-  document.getElementById('sPR').textContent = papers.filter(p=>p.priority_author).length;
-  document.getElementById('sFav').textContent = favs.size;
+  document.getElementById('sEEG').textContent   = papers.filter(p=>p.method==='EEG').length;
+  document.getElementById('sFMRI').textContent  = papers.filter(p=>p.method==='fMRI').length;
+  document.getElementById('sRev').textContent   = papers.filter(p=>p.paper_type==='Review'||p.paper_type==='Perspective').length;
+  document.getElementById('sPP').textContent    = papers.filter(p=>p.preprint).length;
+  document.getElementById('sPR').textContent    = papers.filter(p=>p.priority_author).length;
+  document.getElementById('sFav').textContent   = favs.size;
   const empty = papers.length === 0;
-  document.getElementById('tableView').style.display = (view==='table' && !empty) ? 'block' : 'none';
-  document.getElementById('cardView').style.display  = (view==='card'  && !empty) ? 'block' : 'none';
+  document.getElementById('tableView').style.display  = (view==='table' && !empty) ? 'block' : 'none';
+  document.getElementById('cardView').style.display   = (view==='card'  && !empty) ? 'block' : 'none';
   document.getElementById('no-results').style.display = empty ? 'block' : 'none';
   if(!empty){
     if(view==='table') renderTable(papers);
@@ -398,45 +403,56 @@ function render(){
 }
 
 function renderTable(papers){
-  if(dt){ dt.destroy(); }
-  document.getElementById('tableBody').innerHTML = papers.map((p,i) => `<tr>
-    <td style="text-align:center"><span class="fav-star${favs.has(p.id)?' on':''}" onclick="toggleFav('${p.id}');event.stopPropagation()">★</span></td>
-    <td style="color:#cbd5e0;font-size:.78em">${i+1}</td>
-    <td>
-      <a class="ptitle" href="${p.doi_url}" target="_blank">${p.title}</a>
-      <div class="pmeta">${p.first_author_short}${p.institution ? ' · ' + p.institution : ''}</div>
-    </td>
-    <td><em style="font-size:.83em;color:#4a5568">${p.journal}</em></td>
-    <td style="white-space:nowrap;font-size:.8em;color:#a0aec0">${p.date}</td>
-    <td style="white-space:nowrap;font-size:.8em;color:#718096">${p.age_range||'—'}</td>
-    <td><div class="tag-cell">${(p.keywords||[]).map(k=>`<span class="tag ${tagCls(k)}">${k}</span>`).join('')}</div></td>
-    <td style="white-space:nowrap">
-      ${p.paper_type ? typeBadge(p.paper_type) : ''}
-      ${p.preprint ? ` <span class="pp-badge">${p.preprint}</span>` : ''}
-      ${p.priority_author ? ' <span class="pr-badge">★ Priority</span>' : ''}
-    </td>
-  </tr>`).join('');
+  if(dt){ dt.destroy(); dt = null; }
+  document.getElementById('tableBody').innerHTML = papers.map((p,i) => {
+    const star = `<span class="fav-star${favs.has(p.id)?' on':''}" onclick="toggleFav('${esc(p.id)}');event.stopPropagation()">&#9733;</span>`;
+    const tags = (p.keywords||[]).map(k=>`<span class="tag ${tagCls(k)}">${esc(k)}</span>`).join('');
+    const status = [
+      p.paper_type ? typeBadge(p.paper_type) : '',
+      p.preprint   ? `<span class="pp-badge">${esc(p.preprint)}</span>` : '',
+      p.priority_author ? '<span class="pr-badge">&#9733; Priority</span>' : ''
+    ].filter(Boolean).join(' ');
+    return `<tr>
+      <td style="text-align:center">${star}</td>
+      <td style="color:#cbd5e0;font-size:.78em">${i+1}</td>
+      <td>
+        <a class="ptitle" href="${esc(p.doi_url)}" target="_blank">${esc(p.title)}</a>
+        <div class="pmeta">${esc(p.first_author_short)}${p.institution?' &middot; '+esc(p.institution):''}</div>
+      </td>
+      <td><em style="font-size:.83em;color:#4a5568">${esc(p.journal)}</em></td>
+      <td style="white-space:nowrap;font-size:.8em;color:#a0aec0">${esc(p.date)}</td>
+      <td style="font-size:.78em;color:#718096">${esc(p.age_range||'—')}</td>
+      <td><div class="tag-cell">${tags}</div></td>
+      <td style="white-space:nowrap">${status}</td>
+    </tr>`;
+  }).join('');
   dt = $('#paperTable').DataTable({
-    pageLength:25, order:[], searching:false, info:false,
-    paging: papers.length > 25, lengthChange:false,
-    columnDefs:[{orderable:false, targets:[0,6]}]
+    pageLength: 25, order: [], searching: false, info: false,
+    paging: papers.length > 25, lengthChange: false,
+    columnDefs: [{orderable: false, targets: [0, 6]}]
   });
 }
 
 function renderCards(papers){
-  document.getElementById('cardContainer').innerHTML = papers.map(p => `
-  <div class="paper-card">
-    <span class="fav-star${favs.has(p.id)?' on':''}" onclick="toggleFav('${p.id}')" style="float:right;margin-left:8px;font-size:1.3em" title="Save">★</span>
-    <a class="card-title" href="${p.doi_url}" target="_blank">${p.title}</a>
-    ${p.priority_author ? ' <span class="pr-badge">★ Priority</span>' : ''}
-    <div class="card-meta">&#128197; ${p.date} &nbsp;&#128218; <em>${p.journal}</em>${p.preprint ? ` &nbsp;<span class="pp-badge">${p.preprint}</span>` : ''}${p.paper_type ? ` &nbsp;${typeBadge(p.paper_type)}` : ''}</div>
-    <div class="card-authors"><strong>Authors:</strong> ${p.authors}</div>
-    <div class="card-info"><strong>Institution:</strong> ${p.institution||'—'} &nbsp;|&nbsp; <strong>Age:</strong> ${p.age_range||'—'} &nbsp;|&nbsp; <strong>Stats:</strong> ${p.statistical_approach||'—'}</div>
-    <div class="card-tags">${(p.keywords||[]).map(k=>`<span class="tag ${tagCls(k)}">${k}</span>`).join('')}</div>
-    <details open><summary>Abstract</summary><div class="abs-body">${p.abstract||'Not available'}</div></details>
-    ${p.key_figure ? `<details><summary>Key Figure</summary><div class="fig-body">${p.key_figure}</div></details>` : ''}
-    <a class="pub-link" href="${p.doi_url}" target="_blank">&#128279; View paper &amp; figures at publisher &#8599;</a>
-  </div>`).join('');
+  document.getElementById('cardContainer').innerHTML = papers.map(p => {
+    const tags = (p.keywords||[]).map(k=>`<span class="tag ${tagCls(k)}">${esc(k)}</span>`).join('');
+    const badges = [
+      p.paper_type ? typeBadge(p.paper_type) : '',
+      p.preprint   ? `<span class="pp-badge">${esc(p.preprint)}</span>` : '',
+      p.priority_author ? '<span class="pr-badge">&#9733; Priority</span>' : ''
+    ].filter(Boolean).join(' &nbsp;');
+    return `<div class="paper-card">
+      <span class="fav-star${favs.has(p.id)?' on':''}" onclick="toggleFav('${esc(p.id)}')" style="float:right;margin-left:8px;font-size:1.3em" title="Save">&#9733;</span>
+      <a class="card-title" href="${esc(p.doi_url)}" target="_blank">${esc(p.title)}</a>
+      <div class="card-meta">&#128197; ${esc(p.date)} &nbsp;&#128218; <em>${esc(p.journal)}</em>${badges ? ' &nbsp;'+badges : ''}</div>
+      <div class="card-authors"><strong>Authors:</strong> ${esc(p.authors)}</div>
+      <div class="card-info"><strong>Institution:</strong> ${esc(p.institution||'—')} &nbsp;|&nbsp; <strong>Age:</strong> ${esc(p.age_range||'—')} &nbsp;|&nbsp; <strong>Method:</strong> ${esc(p.method||'—')}</div>
+      <div class="card-tags">${tags}</div>
+      <details open><summary>Abstract</summary><div class="abs-body">${esc(p.abstract||'Not available')}</div></details>
+      ${p.key_figure ? `<details><summary>Key Figure</summary><div class="fig-body">${esc(p.key_figure)}</div></details>` : ''}
+      <a class="pub-link" href="${esc(p.doi_url)}" target="_blank">&#128279; View at publisher &#8599;</a>
+    </div>`;
+  }).join('');
 }
 
 function setView(v){
@@ -447,20 +463,20 @@ function setView(v){
 }
 
 function resetFilters(){
-  document.getElementById('filterMonth').value = '';
-  document.getElementById('filterJournal').value = '';
-  document.getElementById('filterSearch').value = '';
-  document.getElementById('filterType').value = '';
+  ['filterYear','filterMonth','filterJournal','filterMethod','filterType','filterSearch'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.value = '';
+  });
   activeKW.clear();
   document.querySelectorAll('.chip').forEach(c => c.classList.remove('on'));
-  pills = {pp:false, pr:false, fv:false};
+  pills = {pp: false, pr: false, fv: false};
   ['Pp','Pr','Fv'].forEach(n => document.getElementById('btn'+n).classList.remove('active'));
   render();
 }
 
-document.getElementById('filterMonth').addEventListener('change', render);
-document.getElementById('filterJournal').addEventListener('change', render);
-document.getElementById('filterType').addEventListener('change', render);
+['filterYear','filterMonth','filterJournal','filterMethod','filterType'].forEach(id =>
+  document.getElementById(id).addEventListener('change', render)
+);
 document.getElementById('filterSearch').addEventListener('input', render);
 init();
 </script>
